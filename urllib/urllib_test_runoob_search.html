@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0"/>
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8">
+  <title>JDBC 接口 | 达梦技术文档</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://hexo.io/zh-cn/app-dev/java-jdbc.html">
+  <!-- Alternative links -->
+  
+    
+      <link rel="alternative" hreflang="zh-cn" href="https://hexo.io/zh-cn/zh-cn/app-dev/java-jdbc">
+    
+  
+  <!-- Icon -->
+
+  <link rel="stylesheet" href="https://download.dameng.com/eco/eco-lib-public/eco-markdown/md-article.css">
+  <link rel="stylesheet" href="https://download.dameng.com/eco/eco-lib-public/hljs/styles/github.min.css">
+  <script src="https://download.dameng.com/eco/eco-lib-public/hljs/highlight.load.min.js"></script>
+  <link rel="apple-touch-icon" sizes="57x57" href="/document/dm/icon/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/document/dm/icon/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/document/dm/icon/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/document/dm/icon/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/document/dm/icon/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/document/dm/icon/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/document/dm/icon/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/document/dm/icon/apple-touch-icon-152x152.png">
+  <link rel="icon" type="image/png" href="/document/dm/icon/favicon-196x196.png" sizes="196x196">
+  <link rel="icon" type="image/png" href="/document/dm/icon/favicon-160x160.png" sizes="160x160">
+  <link rel="icon" type="image/png" href="/document/dm/icon/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="/document/dm/icon/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/document/dm/icon/favicon-32x32.png" sizes="32x32">
+  <meta name="msapplication-TileColor" content="#2f83cd">
+  <meta name="msapplication-TileImage" content="/document/dm/icon/mstile-144x144.png">
+  <!-- CSS -->
+  <!-- build:css build/css/navy.css -->
+  <link rel="stylesheet" href="/document/dm/css/navy.css?date=2024-12-11">
+  <!-- endbuild -->
+  <!-- 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-lato@0.0.75/index.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css">
+   -->
+
+   <script>
+      window.addEventListener('load', () => {
+        if(window.location.pathname.indexOf('document-preview') >=0){
+          Array.from(document.getElementsByTagName('a'))
+            .forEach(v=>{
+              if(v.href && v.href.indexOf('document/'>=0))
+                v.href = v.href.replace('document/','document-preview/')
+            })
+        }
+      });
+   </script>
+  
+  <!-- RSS -->
+  <link rel="alternate" href="/document/dm/atom.xml" title="达梦技术文档" type="application/atom+xml">
+  <!-- Open Graph -->
+  <meta name="description" content="一、前言 JDBC (Java Database Connectivity)  是 Java 应用程序与数据库的接口规范，旨在让各数据库开发商为 Java 程序员提供标准的数据库应用程序编程接口 (API) 。JDBC 定义了一个跨数据库、跨平台的通用 SQL 数据库 API。 DM JDBC 数据库驱动程序是一个能够支持基本 SQL 功能的通用应用程序编程接口，支持一般的 SQL 数据库访问。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JDBC 接口">
+<meta property="og:url" content="https://hexo.io/zh-cn/app-dev/java-jdbc">
+<meta property="og:site_name" content="达梦技术文档">
+<meta property="og:description" content="一、前言 JDBC (Java Database Connectivity)  是 Java 应用程序与数据库的接口规范，旨在让各数据库开发商为 Java 程序员提供标准的数据库应用程序编程接口 (API) 。JDBC 定义了一个跨数据库、跨平台的通用 SQL 数据库 API。 DM JDBC 数据库驱动程序是一个能够支持基本 SQL 功能的通用应用程序编程接口，支持一般的 SQL 数据库访问。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226141847UWTCR7SKVNE62XH0DV">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20241021155313JWE0CUAMR5XJ5WOCO4">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226141937UXBCX1LIXE279W53V9">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226170404AOI5AW8A2YUF2H2HZR">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20221214151551WMVIDEUWTZK1MTA8CK">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/202212261705277VQJJYEYC50VNSYV02">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/202212261707003XSBXHQTFDS3R5KGEE">
+<meta property="og:image" content="file:///C:/Users/yboo/AppData/Local/Temp/ksohtml75992/wps1.jpg">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226170819D748TIZVM35OQMZ52E">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/202212231037381QM3TL20H9JQY4LUNE">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/202212141520439GDZOO18YV6MGYAMOA">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20221214152053SFP4DOMHNCE7OAG2IR">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/202212261716317MSMW7KG9GGRZQS243">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/202212261717040OWRLU0RMNSLOZ229D">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226171828NSZHU92ND1CEFUV462">
+<meta property="og:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20221228105844G9Z86ASJ60867D3V94">
+<meta property="article:published_time" content="2024-12-11T02:40:20.903Z">
+<meta property="article:modified_time" content="2024-12-11T02:40:20.903Z">
+<meta property="article:author" content="dameng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226141847UWTCR7SKVNE62XH0DV">
+<meta name="twitter:site" content="hexojs">
+<meta property="fb:admins" content="100000247608790">  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<!-- onscroll="myFunction" -->
+<body>
+  <div id="container">
+  <progress value="0" max="100" class="progress"></progress>
+    <header id="header">
+  <div id="header-inner">
+    <h1 id="logo-title" >
+
+      <style>
+      .logo-title-div{
+        width: 40px;
+        display: inline-block;
+        overflow: hidden;
+      }
+      </style>
+      <a href="/" style="text-decoration: none;">
+        <div class="logo-title-div">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-damengwendang"></use>
+          </svg>
+        </div>
+        <span id ="logo-title-span" style="
+          color: white;
+          vertical-align: 9px;
+          text-decoration: none;
+          font-size: 22px;
+        "></span>
+        <script>
+          document.getElementById('logo-title-span').innerText = document.title.split('|').reverse()[0].trim()
+        </script>
+      </a>
+    </h1>
+    <h1 id="mobile-logo-title" >
+      <a href="/">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-logo-blue"></use>
+        </svg>
+      </a>
+    </h1>
+    <nav id="main-nav" style="color: #fff;">
+      <a href="/document/dm/zh-cn/start/" class="main-nav-link">快速上手</a><a href="/document/dm/zh-cn/ops/" class="main-nav-link">运维指南</a><a href="/document/dm/zh-cn/app-dev/" class="main-nav-link is-active">应用开发指南</a><a href="/document/dm/zh-cn/sql-dev/" class="main-nav-link">SQL 开发指南</a><a href="/document/dm/zh-cn/faq/" class="main-nav-link">常见问题</a><a href="/document/dm/zh-cn/pm/" class="main-nav-link">产品手册</a>
+    </nav>
+    <div id="search-input">
+      <input id="search-word" placeholder="搜索文档" maxlength="255" >
+      <svg class="icon search-icon" aria-hidden="true">
+        <use xlink:href="#icon-search"></use>
+      </svg>
+      <svg class="icon clear-icon" aria-hidden="true">
+        <use xlink:href="#icon-eliminate"></use>
+      </svg>
+    </div>
+
+    <a id="mobile-nav-toggle">
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+    </a>
+  </div>
+</header>
+<script>
+document.getElementById("search-word").onkeydown = function(e){
+  var theEvent = e || window.event;
+  var code = theEvent.keycode || theEvent.which || theEvent.charcode;
+  if (code == 13 && document.getElementById("search-word").value) {
+      window.open('/search/?value=' +  encodeURIComponent(document.getElementById("search-word").value.replace(/%/,'u0001'))+ '&searchType=0&searchPage=docs', '_blank')
+  }
+};
+document.querySelector(".search-icon").onclick = function(){
+  handleSearch();
+};
+
+function handleSearch() {
+  if (document.getElementById("search-word").value) {
+      window.open('/search/?value=' + encodeURIComponent(document.getElementById("search-word").value.replace(/%/,'u0001')) + '&searchType=0&searchPage=docs', '_blank')
+  }
+}
+
+</script>
+
+    <div id="content-wrap">
+  <div id="content" class="wrapper" style="margin-top: 67px;">
+    <div id="content-inner">
+      <aside id="sidebar" role="navigation">
+  <style>.othersite{height:0;overflow:hidden}</style>
+  <div class="othersite">
+    <a href="/cases/">案例</a>
+    <a href="/community/question/">问答</a>
+    <a href="/community/products/damengpai">一体机</a>
+    <a href="/community/topic/">专栏</a>
+  </div>
+  <div class="inner" style=" overflow-x: hidden; overflow-y: auto; margin-bottom: 40px; height: calc(100vh - 80px);">
+    
+          <div class="left-sidebar-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="left-sidebar-link" onclick="toggel(this)" style="font-weight:800;">JAVA 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="develop-environment-prepare-java.html" class="left-sidebar-link ">JAVA 开发环境准备</a>
+<a style="display:block;padding-left:8px" href="java-jdbc.html" class="left-sidebar-link current">JDBC 接口</a>
+<a style="display:block;padding-left:8px" href="java-hibernate-frame.html" class="left-sidebar-link ">Hibernate 框架</a>
+<a style="display:block;padding-left:8px" href="java-iBatis-frame.html" class="left-sidebar-link ">iBatis 框架</a>
+<a style="display:block;padding-left:8px" href="java_Mybatis_frame.html" class="left-sidebar-link ">Mybatis 框架</a>
+<a style="display:block;padding-left:8px" href="java-MyBatis-Plus-frame.html" class="left-sidebar-link ">MyBatis-Plus 框架</a>
+<a style="display:block;padding-left:8px" href="java-spring-frame.html" class="left-sidebar-link ">Spring 框架</a>
+<a style="display:block;padding-left:8px" href="java-mycat_new.html" class="left-sidebar-link ">MyCat 框架</a>
+<a style="display:block;padding-left:8px" href="JAVA_ShardingJDBC.html" class="left-sidebar-link ">Sharding-JDBC框架</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="left-sidebar-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="left-sidebar-link" onclick="toggel(this)" style="font-weight:800;">C/C++ 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="c_c++_odbc.html" class="left-sidebar-link ">ODBC 接口</a>
+
+          <div class="left-sidebar-link-group" style="transition: all 0.3s ease-out; padding-left:8px;">
+            <a class="left-sidebar-link" onclick="toggel(this)" style="font-weight:400;">QT 接口<i class="iconfont second-icon">&#xe6a1;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="c_c++_qodbc.html" class="left-sidebar-link ">QODBC 编译</a>
+<a style="display:block;padding-left:8px" href="c_c++_qdm.html" class="left-sidebar-link ">QDM 编译</a></div>
+          </div>
+          <div ></div>
+        
+<a style="display:block;padding-left:8px" href="c_c++_proc.html" class="left-sidebar-link ">Pro*C 接口</a>
+<a style="display:block;padding-left:8px" href="c_c++_dpi.html" class="left-sidebar-link ">DPI 接口</a>
+<a style="display:block;padding-left:8px" href="lua-development.html" class="left-sidebar-link ">lua接口</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="left-sidebar-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="left-sidebar-link" onclick="toggel(this)" style="font-weight:800;">.NET 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="dot-Net-Data-Provider.html" class="left-sidebar-link ">.Net Data Provider</a>
+<a style="display:block;padding-left:8px" href="net-Dapper.html" class="left-sidebar-link ">Dapper 框架</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="left-sidebar-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="left-sidebar-link" onclick="toggel(this)" style="font-weight:800;">PHP 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="PHP_WSL2_Ubuntu.html" class="left-sidebar-link ">WSL2-Ubuntun 下使用 PHP</a>
+<a style="display:block;padding-left:8px" href="php_php_new.html" class="left-sidebar-link ">PHP 数据库接口</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="left-sidebar-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="left-sidebar-link" onclick="toggel(this)" style="font-weight:800;">Python 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="python-python.html" class="left-sidebar-link ">Python 数据库接口</a>
+<a style="display:block;padding-left:8px" href="python-flask.html" class="left-sidebar-link ">Flask 框架</a>
+<a style="display:block;padding-left:8px" href="python_environment.html" class="left-sidebar-link ">Python 开发环境准备</a>
+<a style="display:block;padding-left:8px" href="python-django.html" class="left-sidebar-link ">Django 框架</a>
+<a style="display:block;padding-left:8px" href="python-SQLAlchemy.html" class="left-sidebar-link ">SQLAlchemy 框架</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="left-sidebar-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="left-sidebar-link" onclick="toggel(this)" style="font-weight:800;">GO 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="go_gorm.html" class="left-sidebar-link ">GORM 框架</a>
+<a style="display:block;padding-left:8px" href="go_dm.html" class="left-sidebar-link ">DM 接口</a>
+<a style="display:block;padding-left:8px" href="go_odbc.html" class="left-sidebar-link ">ODBC接口</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="left-sidebar-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="left-sidebar-link" onclick="toggel(this)" style="font-weight:800;">JavaScript 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="JavaScript_NodeJs.html" class="left-sidebar-link ">Node.js 框架</a></div>
+          </div>
+          <div class="bar-border"></div>
+        <script>
+
+  function isOpenWeb(group) {
+    const children = Array.from(group.children[1].children)
+    const isOpenStatus = children.map(function (element) {
+      if (element.className.indexOf('left-sidebar-link-group') >= 0) {
+        return isOpenWeb(element)
+      } else {
+        if (element.className.indexOf('current') >= 0) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }).reduce((a, b) => a || b, false)
+
+
+    if (isOpenStatus) {
+      if (group.className.indexOf('top') >= 0)
+        group.className = 'left-sidebar-link-group top open'
+      else
+        group.className = 'left-sidebar-link-group open'
+    }else{
+      if (group.className.indexOf('top') >= 0)
+        group.className = 'left-sidebar-link-group top '
+      else
+        group.className = 'left-sidebar-link-group'
+    }
+
+    return isOpenStatus
+  }
+
+  function calcuHeightWeb(group){
+    const link = group.children[0]
+    const div = group.children[1]
+    let  h = link.offsetHeight
+
+    if(group.className.indexOf('open')<0){
+
+    }else{
+      const cheight =  Array.from(div.children).map(element=>{
+        if (element.className.indexOf('left-sidebar-link-group') >= 0) {
+          return calcuHeightWeb(element)
+        } else {
+          return (element.offsetHeight)
+        }
+      }).reduce((a,b)=>a+b,0)
+
+      h = h + cheight
+    }
+
+    group.style.height = h + 'px'
+
+    return h
+  }
+
+  window.onload=function(){
+    // left sider display block
+
+    Array.from(document.querySelectorAll('.left-sidebar-link-group.top')).forEach(v=>{
+      v.style.display = "block";
+      v.nextElementSibling.style.display = "inherit"
+    })
+
+    Array.from(document.querySelectorAll('.left-sidebar-link-group.top')).forEach(v=>{
+      isOpenWeb(v)})
+
+    Array.from(document.querySelectorAll('.left-sidebar-link-group.top')).forEach(v=>{
+      calcuHeightWeb(v)})
+
+    Array.from(document.querySelectorAll('.left-sidebar-link')).forEach(v=>{
+      if(v.parentElement.className.indexOf('side-mobile-nav-link-group')>=0){
+        v.parentElement.classList.replace('side-mobile-nav-link-group','left-sidebar-link-group')
+      }
+    })
+
+  }
+
+  </script>
+    
+  <script>
+  document.querySelectorAll('.sidebar-title.left-siderbar').forEach(v=>v.onclick=()=>{
+    if(v.className.indexOf('open') >= 0){
+      v.className="sidebar-title left-siderbar"
+      v.nextElementSibling.style.height="0"
+    }else{      
+      {        
+        var x = document.querySelectorAll(".sidebar-title.left-siderbar");
+        var i;
+        for (i = 0; i < x.length; i++) {
+          x[i].nextElementSibling.style.height = "0";
+        }
+      }
+      v.className="sidebar-title left-siderbar open";
+      v.nextElementSibling.style.height = v.nextElementSibling.children.length * 28 +"px";
+    }
+  })
+  document.querySelectorAll('.sidebar-subtitle.second-menu').forEach(v=>v.onclick=()=>{
+    // 关闭
+    if(v.className.indexOf('expanded') >= 0){
+      v.className = "sidebar-subtitle second-menu"; 
+      v.parentElement.style.height = "28px";
+      v.parentElement.parentElement.style.height = v.parentElement.parentElement.children.length  * 28 +"px";
+
+
+    }else{
+      // 其他全部折叠，展开当前
+      {        
+        var x = document.querySelectorAll(".sidebar-subtitle.second-menu");
+        var i;
+        for (i = 0; i < x.length; i++) {
+          x[i].parentElement.style.height = "28px";
+          x[i].className = "sidebar-subtitle second-menu";
+        }
+      }
+      v.className="sidebar-subtitle second-menu expanded";
+      v.parentElement.style.height = (v.nextElementSibling.children.length +1) * 28 + "px";
+      
+      v.parentElement.parentElement.style.height = (v.nextElementSibling.children.length + v.parentElement.parentElement.children.length) * 28 +"px";
+    }
+  });
+  </script>
+  </div>
+</aside>
+      <article class="article-container" itemscope itemtype="http://schema.org/Article">
+        <div class="article-inner">
+          <div class="article" style=" margin-top:24px;">
+            <div>
+              <header class="article-header">
+                <h1 class="article-title" itemprop="name">JDBC 接口</h1>
+              </header>
+              <div class="article-content vditor-reset" itemprop="articleBody" >
+                <div>
+<h2 id="一-前言" class="article-heading">一、前言<a class="article-anchor" href="#一-前言" aria-hidden="true"></a></h2>
+<p>JDBC (Java Database Connectivity)  是 Java 应用程序与数据库的接口规范，旨在让各数据库开发商为 Java 程序员提供标准的数据库应用程序编程接口 (API) 。JDBC 定义了一个跨数据库、跨平台的通用 SQL 数据库 API。</p>
+<p>DM JDBC 数据库驱动程序是一个能够支持基本 SQL 功能的通用应用程序编程接口，支持一般的 SQL 数据库访问。通过 JDBC 驱动程序，用户可以在应用程序中实现对 DM 数据库的连接与访问，JDBC 驱动程序的主要功能包括：</p>
+<ul>
+<li>建立与 DM 数据库的连接。</li>
+<li>转接发送 SQL 语句到数据库。</li>
+<li>处理并返回语句执行结果。</li>
+</ul>
+<p>由于 DM JDBC 驱动遵照 JDBC 标准规范设计与开发，因此 DM ODBC 接口提供的函数与标准 JDBC 一致。JDBC 接口函数较多，下表仅列出了 DM JDBC 主要接口和函数：</p>
+<table>
+    <thead>
+        <tr>
+            <th>主要类或接口</th>
+            <th>类或接口说明</th>
+            <th>主要函数</th>
+	<th>函数说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td rowspan="4">java.sql.DriverManager</td>
+	 <td rowspan="4">用于管理驱动程序、<br>并可与数据库建立连接。<br>其类中的方法均<br>为静态方法。</td>
+	 <td>getConnection</td>
+	 <td>创建连接</td>
+        </tr>
+         <tr>
+          <td>setLoginTimerout</td>
+	<td>设置登录超时时间</td>
+        </tr>
+ <tr>
+          <td>registerDriver</td>
+	<td>注册驱动</td>
+        </tr>
+<tr>
+          <td>deregisterDriver</td>
+          <td>卸载驱动</td>
+        </tr>
+<tr>
+          <td rowspan="5">java.sql.Connection</td>
+	 <td rowspan="5">数据库连接类，作用<br>是管理执行数据库的<br>连接，可用于提交和回<br>滚事务、创建Statement<br>对象等操作。</td>
+	 <td>createStatement</td>
+	 <td>创建一个 Statement <br>对象</td>
+        </tr>
+         <tr>
+          <td>setAutoCommit</td>
+	<td>设置自动提交</td>
+        </tr>
+ <tr>
+          <td>close</td>
+	<td>关闭数据库连接</td>
+        </tr>
+<tr>
+          <td>commit</td>
+          <td>提交事务</td>
+        </tr>
+<tr>
+          <td>rollback</td>
+          <td>回滚事务</td>
+        </tr>
+<tr>
+          <td rowspan="4">java.sql.Statement</td>
+	 <td rowspan="4">用于在连接上运行<br>SQL 语句，并可访问结<br>果。</td>
+	 <td>execute</td>
+	 <td>运行 SQL 语句</td>
+        </tr>
+         <tr>
+          <td>executeQuery</td>
+	<td>执行一条返回 ResultSet <br>的 SQL 语句</td>
+        </tr>
+ <tr>
+          <td>executeUpdate</td>
+	<td>执行 INSERT、UPDATE、<br>DELETE 或一条没有返回<br>数据集的 SQL 语句</td>
+        </tr>
+<tr>
+          <td>getResultSet</td>
+          <td>用于得到当前 ResultSet<br>的结果</td>
+        </tr>
+<tr>
+          <td rowspan="4">java.sql.ResultSet</td>
+	 <td rowspan="4">结果集对象，主要用<br>于查询结果访问</td>
+	 <td>absolute</td>
+	 <td>将结果集的记录指针移动到指定行</td>
+        </tr>
+         <tr>
+          <td>next</td>
+	<td>将结果集的记录指针定位到下一行</td>
+        </tr>
+ <tr>
+          <td>last</td>
+	<td>将结果集的记录指针定位到最后一行</td>
+        </tr>
+<tr>
+          <td>close</td>
+          <td>释放 ResultSet 对象</td>
+        </tr>
+<tr>
+          <td rowspan="5">java.sql.DatabaseMetaData</td>
+	 <td rowspan="5">用于获取数据库元<br>数据信息的类，如模式<br>信息、表信息、表权限<br>信息、表列信息、存储<br>过程信息等</td>
+	 <td>getTables</td>
+	 <td>得到指定参数的表信息</td>
+        </tr>
+         <tr>
+          <td>getColumns</td>
+	<td>得到指定表的列信息</td>
+        </tr>
+ <tr>
+          <td>getPrimaryKeys</td>
+	<td>得到指定表的主键信息</td>
+        </tr>
+<tr>
+          <td>getTypeInfo</td>
+          <td>得到当前数据库的数据类型信息</td>
+        </tr>
+<tr>
+          <td>getExportedKeys</td>
+          <td>得到制定表的外键信息</td>
+        </tr>
+<tr>
+          <td rowspan="4">java.sql.ResultSetMetaData</td>
+	 <td rowspan="4">用于获取结果集元<br>数据信息的类，如结果<br>集的列数、列的名称、<br>列的数据类型、列大小<br>等信息</td>
+	 <td>getColumnCount</td>
+	 <td>得到数据集中的列数</td>
+        </tr>
+         <tr>
+          <td>getColumnName</td>
+	<td>得到数据集中指定的列名</td>
+        </tr>
+ <tr>
+          <td>getColumnLabel</td>
+	<td>得到数据集中指定的标签</td>
+        </tr>
+<tr>
+          <td>getColumnType</td>
+          <td>得到数据集中指定的数据类型</td>
+        </tr>
+    </tbody>
+</table>
+<h2 id="二-数据库连接" class="article-heading"><strong>二、数据库连接</strong><a class="article-anchor" href="#二-数据库连接" aria-hidden="true"></a></h2>
+<h3 id="2-1-准备-DM-JDBC-驱动包" class="article-heading"><strong>2.1 准备 DM-JDBC 驱动包</strong><a class="article-anchor" href="#2-1-准备-DM-JDBC-驱动包" aria-hidden="true"></a></h3>
+<p>老版本目录结构 ，DM JDBC 驱动 jar 包在 DM 安装目录 /dmdbms/drivers/jdbc，下图所示：</p>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226141847UWTCR7SKVNE62XH0DV" alt="image.png"></p>
+<p>达梦 24 年第三季度版及之后版本，DM JDBC 驱动 jar 包在 DM 安装目录 /dmdbms/drivers/jdbc，新加入 DmJdbcDriver11.jar ，如下图所示：</p>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/20241021155313JWE0CUAMR5XJ5WOCO4" alt="微信截图_20241021155247.png"></p>
+<blockquote class="note notice">
+<strong class="note-title">注意</strong>
+<p>达梦 24 年第三季度版之前的 jdbc 的 jar 包名为 DmJdbcDriver16.jar 代表适配 jdk 1.6， DmJdbcDriver17.jar 代表适配 jdk 1.7 ， DmJdbcDriver18.jar代表适配jdk 1.8, 达梦 24 年第三季度版现加入
+jdk11的版本，并对原有jar进行改名，新的jar名称为DmJdbcDriver6.jar代表适配jdk 1.6， DmJdbcDriver7.jar代表适配jdk 1.7， DmJdbcDriver8.jar代表适配jdk 1.8， DmJdbcDriver11.jar 代表适配jdk 11 。</p>
+</blockquote>
+<h3 id="2-2-数据库连接示例" class="article-heading"><strong>2.2 数据库连接示例</strong><a class="article-anchor" href="#2-2-数据库连接示例" aria-hidden="true"></a></h3>
+<ol>
+<li>DM 数据库扩展连接串的使用</li>
+</ol>
+<p>DM JDBC 数据库连接驱动具体位置是 dm.jdbc.driver.DmDriver。</p>
+<ol start="2">
+<li>连接串的书写格式有以下两种：</li>
+</ol>
+<p>（1）host、port 不作为连接属性，此时只需输入值即可：</p>
+<pre><code class="language-java">jdbc:dm [: //host][:port][?propName1=propValue1][&amp; propName2=propValue2]...
+</code></pre>
+<blockquote class="note notice">
+<strong class="note-title">注意</strong>
+<p> 若 host 不设置，则默认为‘localhost’。<br>若 port 不设置，则默认为‘5236’。</p>
+<p> 若 host 不设置，则 port 一定不能设。</p>
+<p> 若 user、password 没有单独作为参数传入，则必须在连接属性中传入。</p>
+<p> 若 host 为 ipv6 地址，则应包含在[]中。</p>
+</blockquote>
+<p>示例如下：</p>
+<pre><code class="language-java">jdbc:dm://192.168.0.96:5236?resultSetType=1003
+</code></pre>
+<p>（2）host、port 作为连接属性，此时必须按照下表中说明进行设置，且属性名称大小写敏感。</p>
+<table>
+<thead>
+<tr>
+<th>属性名称</th>
+<th>说明</th>
+<th>是否必须设置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“host”</td>
+<td>主库地址，包括 IP、localhost 或者配置文件中主库地址，<br>列表对应的变量名，如 dm_svc.conf 中的“o2000”</td>
+<td>否</td>
+</tr>
+<tr>
+<td>“port”</td>
+<td>端口号，服务器登录端口号</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<p>连接串格式格式如下：</p>
+<pre><code class="language-java">jdbc:dm:// [?propName1=propValue1] [ &amp; propName2=propValue2] [&amp;…]…
+</code></pre>
+<blockquote class="note notice">
+<strong class="note-title">注意</strong>
+<p>host、port 设置与否，以及在属性串中的位置没有限制。若 user、password 没有单独作为参数传入，则必须在连接属性中传入。</p>
+</blockquote>
+<p>示例如下：</p>
+<pre><code class="language-java">jdbc:dm:// ?host=192.168.0.96&amp;port=5236
+</code></pre>
+<blockquote class="note tip">
+<strong class="note-title">建议</strong>
+<p>更多连接串属性的使用请参考《DM 程序员手册》- DM 扩展连接属性的使用，手册位于数据库安装路径/dmdbms/doc 文件夹下。</p>
+</blockquote>
+<ol start="3">
+<li>示例代码</li>
+</ol>
+<pre><code class="language-java">package java_jdbc;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+public class jdbc_conn {
+    static Connection con = null;
+    static String cname = &quot;dm.jdbc.driver.DmDriver&quot;;
+    static String url = &quot;jdbc:dm://localhost:5236&quot;;
+    static String userid = &quot;SYSDBA&quot;;
+    static String pwd = &quot;SYSDBA&quot;;
+    public static void main(String[] args) {
+        try {
+            Class.forName(cname);
+            con = DriverManager.getConnection(url, userid, pwd);
+            con.setAutoCommit(true);
+            System.out.println(&quot;[SUCCESS]conn database&quot;);
+        } catch (Exception e) {
+            System.out.println(&quot;[FAIL]conn database：&quot; + e.getMessage());
+        }
+    }
+    public void disConn(Connection con) throws SQLException {
+        if (con != null) {
+            con.close();
+        }
+    }
+}
+</code></pre>
+<p>运行结果截图：</p>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226141937UXBCX1LIXE279W53V9" alt="image.png"></p>
+<h2 id="三-开发示例" class="article-heading">三、<strong>开发示例</strong><a class="article-anchor" href="#三-开发示例" aria-hidden="true"></a></h2>
+<h3 id="3-1-基础操作示例" class="article-heading"><strong>3.1 基础操作示例</strong><a class="article-anchor" href="#3-1-基础操作示例" aria-hidden="true"></a></h3>
+<ol>
+<li>基础增删改查示例代码。</li>
+</ol>
+<pre><code class="language-java">package java_jdbc;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+public class jdbc_insert {
+// 定义 DM JDBC 驱动串
+static String jdbcString = &quot;dm.jdbc.driver.DmDriver&quot;;
+// 定义 DM URL 连接串
+static String urlString = &quot;jdbc:dm://localhost:5236&quot;;
+// 定义连接用户名
+static String userName = &quot;SYSDBA&quot;;
+// 定义连接用户口令
+static String password = &quot;SYSDBA&quot;;
+// 定义连接对象
+static Connection conn = null;
+// 定义 SQL 语句执行对象
+static Statement state = null;
+// 定义结果集对象
+static ResultSet rs = null;
+public static void main(String[] args) {
+    try {
+        //1.加载 JDBC 驱动程序
+        System.out.println(&quot;Loading JDBC Driver...&quot;);
+        Class.forName(jdbcString);
+        //2.连接 DM 数据库
+        System.out.println(&quot;Connecting to DM Server...&quot;);
+        conn = DriverManager.getConnection(urlString, userName, password);
+        //3.通过连接对象创建 java.sql.Statement 对象
+        state = conn.createStatement();
+//-----------------------------------------------------------------------------
+        //基础操作：此处对应的操作代码为示例库中 PRODUCTION 模式中的
+        //PRODUCT_CATEGORY 表
+        //增加
+            //定义增加的 SQL 这里由于此表中的结构为主键，自增，只需插入 name 列的值
+            String sql_insert = &quot;insert into PRODUCTION.PRODUCT_CATEGORY&quot;+
+            &quot;(name)values('厨艺')&quot;;
+            //执行添加的 SQL 语句
+            state.execute(sql_insert);
+        //删除
+            //定义删除的 SQL 语句
+            String sql_delete = &quot;delete from PRODUCTION.PRODUCT_CATEGORY &quot;+
+            &quot;where name = '厨艺'&quot;;
+            //执行删除的 SQL 语句
+            state.execute(sql_delete);
+        //修改
+            String sql_update = &quot;update PRODUCTION.PRODUCT_CATEGORY set &quot;+
+            &quot;name = '国学' where name = '文学'&quot;;
+        //查询表中数据
+            //定义查询 SQL
+            String sql_selectAll = &quot;select * from PRODUCTION.PRODUCT_CATEGORY&quot;;
+            //执行查询的 SQL 语句
+            rs = state.executeQuery(sql_selectAll);
+            displayResultSet(rs);
+//----------------------------------------------------------------------------
+                state.executeUpdate(sql_update);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                //关闭资源
+                rs.close();
+                state.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    //显示结果集
+    public static void displayResultSet(ResultSet rs) throws SQLException{
+        while (rs.next()) {
+            int i=1;
+            Object id = rs.getObject(i++);
+            Object name = rs.getObject(i++);
+            System.out.println(id+&quot;  &quot;+name);
+        }
+    }
+}
+</code></pre>
+<ol start="2">
+<li>运行示例截图。运行前数据库数据如下图所示：</li>
+</ol>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226170404AOI5AW8A2YUF2H2HZR" alt="image.png"></p>
+<p>运行后控制台输出结果如下图所示：</p>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/20221214151551WMVIDEUWTZK1MTA8CK" alt="image.png"></p>
+<p>运行后数据库数据如下图所示：</p>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/202212261705277VQJJYEYC50VNSYV02" alt="image.png"></p>
+<h3 id="3-2-绑定变量示例" class="article-heading"><strong>3.2 绑定变量示例</strong><a class="article-anchor" href="#3-2-绑定变量示例" aria-hidden="true"></a></h3>
+<ol>
+<li>绑定参数示例代码。</li>
+</ol>
+<pre><code class="language-java">package java_jdbc;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+public class jdbc_prepareStatement{
+    // 定义 DM JDBC 驱动串
+    static String jdbcString = &quot;dm.jdbc.driver.DmDriver&quot;;
+    // 定义 DM URL 连接串
+    static String urlString = &quot;jdbc:dm://localhost:5236&quot;;
+    // 定义连接用户名
+    static String userName = &quot;SYSDBA&quot;;
+    // 定义连接用户口令
+    static String password = &quot;SYSDBA&quot;;
+    // 定义连接对象
+    static Connection conn = null;
+    // 定义 SQL 语句执行对象
+    static PreparedStatement pstate = null;
+    public static void main(String[] args) {
+        try {
+            //1.加载 JDBC 驱动程序
+            System.out.println(&quot;Loading JDBC Driver...&quot;);
+            Class.forName(jdbcString);
+            //2.连接 DM 数据库
+            System.out.println(&quot;Connecting to DM Server...&quot;);
+            conn = DriverManager.getConnection(urlString, userName, password);
+//------------------------------------------------------------------------------------------------------------------------------
+            //绑定操作：此处操作对应的数据库，为示例库中的 PRODUCTION 模式中的
+            //PRODUCT_CATEGORY 表
+            //根据指定 id 修改 PRODUCT_CATEGORY 表中的 name 的值
+            //这里 name 和 id 不确认用?代替
+            String sql_updateNameById = &quot;update PRODUCTION.PRODUCT_CATEGORY &quot;+
+            &quot;set name = ? where PRODUCT_CATEGORYID = ? &quot;;
+            //3.通过连接对象和修改语句的模板，创建 java.sql.PreparedStatement 对象
+            pstate = conn.prepareStatement(sql_updateNameById);
+            //4.绑定?对应的参数：理论上有多少个?就要绑定多少个值;
+            //把 id 为 3 所对应的 name 值修改为 &quot;魔幻&quot;
+            pstate.setString(1, &quot;魔幻&quot;);
+            pstate.setInt(2, 3);
+            //5. 执行 SQL 语句
+            pstate.executeUpdate();
+//------------------------------------------------------------------------------------------------------------------------------
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstate.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+<ol start="2">
+<li>运行示例截图。运行后控制台输出如下图所示：</li>
+</ol>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/202212261707003XSBXHQTFDS3R5KGEE" alt="image.png"></p>
+<p><img src="file:///C:\Users\yboo\AppData\Local\Temp\ksohtml75992\wps1.jpg" alt>运行后数据库截图如下图所示：</p>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226170819D748TIZVM35OQMZ52E" alt="image.png"></p>
+<h3 id="3-3-大字段操作示例" class="article-heading"><strong>3.3 大字段操作示例</strong><a class="article-anchor" href="#3-3-大字段操作示例" aria-hidden="true"></a></h3>
+<ol>
+<li>创建需要操作的含大字段类型的数据表。</li>
+</ol>
+<pre><code class="language-java">CREATE TABLE &quot;PRODUCTION&quot;.&quot;BIG_DATA&quot;
+(
+&quot;ID&quot; INT IDENTITY(1, 1) NOT NULL,
+&quot;PHOTO&quot; IMAGE,
+&quot;DESCRIBE&quot; BLOB,
+&quot;TXT&quot; CLOB,
+NOT CLUSTER PRIMARY KEY(&quot;ID&quot;)) STORAGE(ON &quot;BOOKSHOP&quot;, CLUSTERBTR) ;
+</code></pre>
+<ol start="2">
+<li>在 D 盘根目录下，创建 DM8 特点 .jpg、达梦产品简介 .txt  两个文件，作为大字段存储，如下图所示：</li>
+</ol>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/202212231037381QM3TL20H9JQY4LUNE" alt="image.png"></p>
+<ol start="3">
+<li>插入大字段关键代码。</li>
+</ol>
+<pre><code class="language-java">//1.插入大字段信息:  
+    package java_jdbc;
+    import java.io.BufferedInputStream;
+    import java.io.BufferedReader;
+    import java.io.File;
+    import java.io.FileInputStream;
+    import java.io.FileNotFoundException;
+    import java.io.InputStream;
+    import java.io.InputStreamReader;
+    import java.io.UnsupportedEncodingException;
+    import java.sql.Connection;
+    import java.sql.DriverManager;
+    import java.sql.PreparedStatement;
+    import java.sql.SQLException;
+    public class jdbc_operate_bigData{
+        // 定义 DM JDBC 驱动串
+        static String jdbcString = &quot;dm.jdbc.driver.DmDriver&quot;;
+        // 定义 DM URL 连接串
+        static String urlString = &quot;jdbc:dm://localhost:5236&quot;;
+        // 定义连接用户名
+        static String userName = &quot;SYSDBA&quot;;
+        // 定义连接用户口令
+        static String password = &quot;SYSDBA&quot;;
+        // 定义连接对象
+        static Connection conn = null;
+        // 定义 SQL 语句执行对象
+        static PreparedStatement pstate = null;
+        public static void main(String[] args) {
+            try {
+                //1.加载 JDBC 驱动程序
+                System.out.println(&quot;Loading JDBC Driver...&quot;);
+                Class.forName(jdbcString);
+                //2.连接 DM 数据库
+                System.out.println(&quot;Connecting to DM Server...&quot;);
+                conn = DriverManager.getConnection(urlString, userName, password);
+//------------------------------------------------------------------------------------------------------------------------
+                //1.插入大字段信息:  
+                String sql_insert = &quot;INSERT INTO production.BIG_DATA (\&quot;photo\&quot;,&quot;
+                    + &quot;\&quot;describe\&quot;,\&quot;txt\&quot;)VALUES(?,?,?);&quot;;
+                pstate = conn.prepareStatement(sql_insert);
+                //加载图片为输入流
+                String filePath = &quot;D:\\DM8特点.jpg&quot;;
+                File file = new File(filePath);
+                String filePath2 = &quot;D:\\达梦产品简介.txt&quot;;
+                File file2 = new File(filePath2);
+                InputStream in = new BufferedInputStream(new FileInputStream(file));
+                InputStream in2 = new BufferedInputStream(new FileInputStream(file));
+                BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(file2),&quot;UTF-8&quot;));
+                //1.绑定 stream 流信息到第一个?
+                pstate.setBinaryStream(1, in);
+                //2.绑定 Inputstream 对象到第二个?这里
+                pstate.setBlob(2, in2);
+                //3.绑定 Reader 对象到第三个?
+                pstate.setClob(3, reader);
+                pstate.executeUpdate();
+    //------------------------------------------------------------------------------------------------------------------------
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    pstate.close();
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+</code></pre>
+<ol start="4">
+<li>插入数据后，数据库数据如下所示：</li>
+</ol>
+<ul>
+<li>stream 以字节输入流的形式，插入 Image 类型的字段，数据库保存的是图片信息。</li>
+<li>Blob 以字节输入流的形式，插入 Blob 类型的字段，数据库保存的是图片信息。</li>
+<li>Clob 以字符输入流的形式，插入 Clob 类型的字段，数据库表中保存的是文本信息。</li>
+</ul>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/202212141520439GDZOO18YV6MGYAMOA" alt="image.png"><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/20221214152053SFP4DOMHNCE7OAG2IR" alt="image.png"></p>
+<ol start="5">
+<li>查询大字段关键代码。</li>
+</ol>
+<pre><code class="language-java">package java_jdbc;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+public class jdbc_operate_bigData2{
+    // 定义 DM JDBC 驱动串
+    static String jdbcString = &quot;dm.jdbc.driver.DmDriver&quot;;
+    // 定义 DM URL 连接串
+    static String urlString = &quot;jdbc:dm://localhost:5236&quot;;
+    // 定义连接用户名
+    static String userName = &quot;SYSDBA&quot;;
+    // 定义连接用户口令
+    static String password = &quot;SYSDBA&quot;;
+    // 定义连接对象
+    static Connection conn = null;
+    // 定义 SQL 语句执行对象
+    static PreparedStatement pstate = null;
+    // 定义保存结果集的对象
+    static ResultSet rs = null;
+    // 定义输入流对象
+    static InputStream in = null;
+    // 定义输出流对象
+    static FileOutputStream fos = null;
+    // 定义输出流对象
+    static FileOutputStream fos2 = null;
+    // 定义高效字符流对象
+    static BufferedReader reader = null;
+    public static void main(String[] args) {
+        try {
+            //1.加载 JDBC 驱动程序
+            System.out.println(&quot;Loading JDBC Driver...&quot;);
+            Class.forName(jdbcString);
+            //2.连接 DM 数据库
+            System.out.println(&quot;Connecting to DM Server...&quot;);
+            conn = DriverManager.getConnection(urlString, userName, password);
+//-----------------------------------------------------------------------------------------------
+            //3.查询大字段信息 SQL 语句
+            String sql_insert = &quot;SELECT * FROM production.BIG_DATA ;&quot;;
+            pstate = conn.prepareStatement(sql_insert);
+            //4.创建 ResultSet 对象保存查询结果集
+            rs = pstate.executeQuery();
+            //5.解析结果集
+            while(rs.next()) {
+                //获取第一列 id 信息
+                int id = rs.getInt(&quot;id&quot;);
+                //获取第二列 photo 图片信息，并把该图片直接写入到 D:/id_DM8特点.jpg;
+                in = rs.getBinaryStream(&quot;photo&quot;);
+                fos = new FileOutputStream(&quot;D:/&quot;+id+&quot;_DM8特点.jpg&quot;);
+                int num = 0;
+                //每次从输入流中读取一个字节数据，如果没读到最后指针向下继续循环
+                while((num=in.read())!=-1) {
+                    //将每次读取的字节数据，写入到输出流中
+                    fos.write(num);
+                }
+                //获取第三列的 Blob 大字段信息
+                //Blob 对象处理的是字节型大字段信息例如图片、视频文件等
+                Blob blob = rs.getBlob(&quot;describe&quot;);
+                in = blob.getBinaryStream();
+                fos2 = new FileOutputStream(&quot;D:/&quot;+id+&quot;_Blob_DM8特点.jpg&quot;);
+                //每次从输入流中读取一个字节数据，如果没读到最后指针向下继续循环
+                while((num=in.read())!=-1) {
+                    //将每次读取的字节数据，写入到输出流中
+                    fos2.write(num);
+                }
+                //获取第四列的 Clob 大字段信息
+                //Clob 大字段处理的是字符型大字段信息，文本等数据
+                Clob clob = rs.getClob(&quot;txt&quot;);
+                reader = new BufferedReader(clob.getCharacterStream());
+                String str = null;
+                while((str=reader.readLine())!=null) {
+                    //将每次读取的字节数据
+                    System.out.println(str.toString());
+                }
+            }
+//-----------------------------------------------------------------------------------------
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                //关闭资源
+                fos.close();
+                in.close();
+                rs.close();
+                pstate.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+<ol start="6">
+<li>运行示例截图。运行前如下图所示：</li>
+</ol>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/202212261716317MSMW7KG9GGRZQS243" alt="image.png"></p>
+<p>运行后控制台输出 Clob 里保存的大字段文本信息，如下图所示：</p>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/202212261717040OWRLU0RMNSLOZ229D" alt="image.png"></p>
+<p>运行后读取处理 Image 大字段和 Blob 大字段后的信息，如下图所示：</p>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/20221226171828NSZHU92ND1CEFUV462" alt="image.png"></p>
+<h2 id="四-常见问题" class="article-heading">四、<strong>常见问题</strong><a class="article-anchor" href="#四-常见问题" aria-hidden="true"></a></h2>
+<p><strong>1. JDBC 中使用 setNull 方法给 varchar 类型绑定空值报错：字符串转换出错</strong></p>
+<p>【问题描述】：通过如下语句给 varchar 类型绑定空值报错：字符转换出错。</p>
+<pre><code class="language-java">String sql = &quot;select * from sysobjects where name=?&quot;;
+PreparedStatement stmt = conn.prepareStatement(sql);
+stmt.setNull(1, 0);
+stmt.execute();
+conn.commit();
+</code></pre>
+<p>【问题解决】：出现该报错是由于达梦默认 null 和空串不等价，解决办法如下：</p>
+<ul>
+<li>修改 dm.ini，令 COMPATIBLE_MODE = 2；</li>
+<li>重启数据库服务后生效</li>
+</ul>
+<p><strong>2. jdbc 程序中如何获取存储过程的元数据信息</strong></p>
+<p>【问题描述】：利用如下程序获取存储过程的元数据信息，执行完后获取的元数据信息为空，jdbc 程序代码片段如下：</p>
+<pre><code class="language-java">DatabaseMetaData dbMetaData = conn.getMetaData();
+  ResultSet rs = dbMetaData.getProcedureColumns(&quot;PERSONPACKAGE&quot;, dbMetaData.getUserName(), &quot;ADDPERSON&quot;, null);
+  ResultSet rs = dbMetaData.getProcedureColumns(&quot;PERSONPACKAGE&quot;, dbMetaData.getUserName(), &quot;ADDPERSON&quot;, null);
+   System.out.println(&quot;Get getProcedureColumns：&quot;);
+    while (rs.next()) {
+     System.out.println(&quot;PROCEDURE_NAME：&quot;+rs.getString(&quot;PROCEDURE_NAME&quot;));
+    System.out.println(&quot;COLUMN_NAME：&quot;+rs.getString(&quot;COLUMN_NAME&quot;));
+             }
+</code></pre>
+<p>【问题解决】：需要 JDBC 打开兼容 Oracle 模式，在 jdbc 的 url 串中添加 compatibleMode=oracle。<br>
+例如：jdbc:dm//localhost:5236?compatibleMode=oracle</p>
+<p><strong>3. 报错 JDK 包和驱动不匹配 driver dm.jdbc.driver.DmDriver is not sequoia compliant</strong></p>
+<p>【问题描述】：连接数据库时报错：driver dm.jdbc.driver.DmDriver is not sequoia compliant</p>
+<p><img src="https://eco.dameng.com/eco-file-server/file/eco/preview/20221228105844G9Z86ASJ60867D3V94" alt="image.png"></p>
+<p>【问题解决】：更换 JDK 包就可以了。连接池的连接问题：连接要使用 DM 安装数据库后自带的 JDK 包。</p>
+<p><strong>4. JDBC 驱动连接数据库报错：failed to initialize ssl</strong></p>
+<p>【问题描述】：由于未配置 SSL 环境而使用 SSL 登录。</p>
+<p>【问题解决】：可以关闭 SSL 参数。使用 sysdba 登录执行以下语句：</p>
+<pre><code class="language-sql">SP_SET_PARA_VALUE(2,'ENABLE_ENCRYPT',0);
+</code></pre>
+<p>然后重启达梦数据库服务即可。</p>
+<h2 id="五-参考" class="article-heading">五、参考<a class="article-anchor" href="#五-参考" aria-hidden="true"></a></h2>
+<ol>
+<li>示例代码下载：<a target="_blank" rel="noopener external nofollow noreferrer" href="https://eco.dameng.com/eco-file-server/file/eco/download/20221229154330IB7GXUU59PCX3MRR9W">JAVA_JDBC.zip</a> 。</li>
+<li>以上文档内容参考过程中遇到任何问题，可到 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://eco.dameng.com/community/question/">达梦技术社区</a> 提问交流。</li>
+</ol>
+
+</div>
+
+              </div>
+              <footer class="article-footer">
+                <time class="article-footer-updated" datetime="2024-12-11T02:40:20.903Z" itemprop="dateModified">上次更新：2024-12-11</time>
+                <a href="develop-environment-prepare-java.html" class="article-footer-prev" title="JAVA 开发环境准备"><svg class="icon" style="font-size:16px" aria-hidden="true"><use xlink:href="#icon-arrow-left"></use></svg><span>上一篇</span></a><a href="java-hibernate-frame.html" class="article-footer-next" title="Hibernate 框架"><span>下一篇</span><svg class="icon" style="font-size:16px" aria-hidden="true"><use xlink:href="#icon-arrow-right"></use></svg></a>
+              </footer>
+              
+<section id="comments">
+  <div id="disqus_thread"></div>
+</section>
+<script>
+  var disqus_shortname = 'hexojs';
+  var disqus_url = 'https://hexo.io/zh-cn/app-dev/java-jdbc.html';
+  var disqus_title = "JDBC 接口";
+  var disqus_config = function(){
+    this.language = '';
+  };
+  //(function(){
+  //  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  //  dsq.src = 'https://go.disqus.com/embed.js';
+  //  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ // })();
+</script>
+
+            </div>
+          </div>
+          <aside id="article-toc" role="navigation">
+            <div id="article-toc-inner" style="margin-top:1rem;">
+              <ol class="article-toc-line">
+                <li class="article-toc-start"></li>
+                <li>
+                  <a class="toc-link toc-level-1" href="#" id="">
+                    <span class="toc-text">JDBC 接口</span>
+                  </a>
+                </li>
+                <li>
+                  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%89%8D%E8%A8%80"><span class="toc-text">一、前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5"><span class="toc-text">二、数据库连接</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%87%86%E5%A4%87-DM-JDBC-%E9%A9%B1%E5%8A%A8%E5%8C%85"><span class="toc-text">2.1 准备 DM-JDBC 驱动包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E7%A4%BA%E4%BE%8B"><span class="toc-text">2.2 数据库连接示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%BC%80%E5%8F%91%E7%A4%BA%E4%BE%8B"><span class="toc-text">三、开发示例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-text">3.1 基础操作示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E7%BB%91%E5%AE%9A%E5%8F%98%E9%87%8F%E7%A4%BA%E4%BE%8B"><span class="toc-text">3.2 绑定变量示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%A4%A7%E5%AD%97%E6%AE%B5%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-text">3.3 大字段操作示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-text">四、常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%8F%82%E8%80%83"><span class="toc-text">五、参考</span></a></li></ol>
+                </li>
+                <li class="article-toc-end"></li>
+              </ol>
+            </div>
+          </aside>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+<script>
+
+
+
+ window.onload = function(){
+  var toc_link_height = document.querySelector(".toc-link").offsetHeight
+  var toc_text_height = document.querySelector(".toc").offsetHeight + toc_link_height + 184
+  var toc_inner_height = document.getElementById("article-toc-inner").offsetHeight
+
+  if(toc_text_height < toc_inner_height){
+    document.getElementById("article-toc-top2").style.display = "inherit"
+    document.getElementById("article-toc-top1").style.display = "none"
+  }else{
+    document.getElementById("article-toc-top2").style.display = "none"
+    document.getElementById("article-toc-top1").style.display = "inherit"
+  }
+}
+
+window.getTitle = () => {
+  var router = document.querySelector(".main-nav-link.is-active").innerText;
+
+  var third = document.querySelector(".left-sidebar-link.current") || null;
+
+  if(!third){
+    return ('文档-' + router + '-主页');
+  }else{
+    var second = third.parentElement.parentElement.children[0].childNodes[0];
+    var first = second.parentElement.parentElement.parentElement.parentElement.children[0].childNodes[0];
+    var current = document.querySelector(".left-sidebar-link.current").innerText;
+
+    if(first !== second){
+      if(first.parentElement.className == "inner"){
+        return ('文档-' + router + '-' + second.textContent + '-' + current)
+      }else{
+        return ('文档-' + router + '-' + first.textContent + '-' + second.textContent + '-' + current)
+      }
+    }else{
+        return ('文档-' + router + '-' + second.textContent + '-' + current);
+    }
+  }
+}
+
+
+
+
+var aTagArr = [].slice.apply(document.getElementsByTagName("a"));
+
+aTagArr.forEach(function (e, i) {
+  e.href.indexOf("_blank") > -1 ? e.target = "_blank" : null;
+});
+</script>
+<script src="https://download.dameng.com/eco/eco-lib-cli/lib/track.js?date=2024-12-11" type="text/javascript"></script>
+<script>
+    // if(window.ecoTrack) window.ecoTrack.onload() 埋点
+</script>
+
+<script>
+
+  function fix_toc(){
+    console.log('top');
+    ([1,2,3,4,5,6]).forEach(level=>{
+      const h = Array.from(document.querySelectorAll('.article-content h'+level))
+      const t = Array.from(document.querySelectorAll('.toc-item.toc-level-'+level+' >.toc-link>.toc-text'))
+
+      const idmap = {}
+
+      h.forEach(i_h=>{
+        const text = i_h.innerText
+        const i_t = t.find(v=>v.innerText === text)
+        if(i_t && i_h && text){
+          const id = idmap[text]? text+'_' + idmap[text]:text
+          idmap[text] = idmap[text]?idmap[text]+1:1
+          const arch = document.createElement('div')
+          arch.style.position = 'absolute'
+          arch.style.top = '-100px'
+          arch.id = id
+          i_h.appendChild(arch)
+          i_h.style.position = 'relative'
+          
+          const link0 =  i_h.querySelector('.article-anchor')
+          if(link0){
+            link0.href = "#"+id
+          }
+          const link1 = i_t.parentElement
+          if(link1){
+            link1.href = "#"+id
+          }
+        }
+      })
+    })
+  }
+
+  
+  fix_toc()
+</script>
+
+    <div>
+    <div class="back-to-top">
+        <div class="wechat-content">
+          <div class="pop-img">
+              <div id="qrcode"></div>
+          </div>
+          <div class="pop-span">
+              <span>微信扫码<br />分享文档</span>
+          </div>
+        </div>
+        <div class="wechat-share">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-share-rig"></use>
+          </svg>
+        </div>
+
+        <div class="pop-content">
+            <img class="pop-img" src="/document/dm/icon/backtotop/kefu.png" />
+            <span class="pop-span">扫一扫<br />联系客服</span>
+        </div>
+        <div class="we-chat">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-WeChat"></use>
+          </svg>
+        </div>
+        <div class="backtop hidden">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-top-rig"></use>
+          </svg>
+        </div>
+    </div>
+</div>
+
+<footer id="footer">
+  <div class="eco-footer-container">
+    <div class="footer-nav">
+      <ul class="footer-nav-left">
+        <li class="footer-item">
+          <a>关于我们</a>
+        </li>
+        <li class="footer-item">
+          <a>合作伙伴</a>
+        </li>
+        <li class="footer-item">
+          <a href="https://eco.dameng.com/community/question/800ea604fb9a8d26268665332eadb35b" rel="external nofollow noreferrer" target="_blank">招贤纳士</a>
+        </li>
+        <li class="footer-item">
+          <a>英文站</a>
+        </li>
+        <li class="footer-item">
+          <a href="https://www.dameng.com/" rel="external nofollow noreferrer" target="_blank">达梦官网</a>
+        </li>
+        <li class="footer-item">
+          <a href="https://www.dmdatatech.com/" rel="external nofollow noreferrer" target="_blank">达梦技术</a>
+        </li>
+        <li class="footer-item">
+          <a href="http://www.gdmbase.com/" rel="external nofollow noreferrer" target="_blank">蜀天梦图</a>
+        </li>
+      </ul>
+      <ul class="footer-nav-right">
+        <li class="footer-item wechat">
+          <div class="popover-wechat" style="display: none">
+            <img src="https://download.dameng.com/eco/eco-lib-public/components/footer/qrcode-new.jpg" alt="" style="display: block; height: 145px; width: 145px;">
+            <div class="text"> 微信公众号 </div>
+            <div class="popover-arrow"></div>
+          </div>
+          <img class="icon wechat" src="https://download.dameng.com/eco/eco-lib-public/components/footer/weichat.png" alt="logo"/>
+        </li>
+        <li class="footer-item phone">
+          <div class="popover-phone" style="display: none;">
+            <div class="text-item-1"> 24小时热线 </div>
+            <div class="text-item-2"> 400 991 6599 </div>
+            <div class="text-item-3"> 商务咨询转 1 号线 </div>
+            <div class="text-item-4"> 技术咨询转 2 号线 </div>
+            <div class="popover-arrow"></div>
+          </div>
+          <img class="icon phone" src="https://download.dameng.com/eco/eco-lib-public/components/footer/phone.png" alt="logo"/>
+        </li>
+        <li class="footer-item email">
+          <div class="popover-email" style="display: none;">
+            <div class="text-item-1">技术支持</div>
+            <div class="text-item-2">dmtech@dameng.com</div>
+            <div class="popover-arrow"></div>
+          </div>
+          <img class="icon email" src="https://download.dameng.com/eco/eco-lib-public/components/footer/mail.png" alt="logo"/>
+        </li>
+      </ul>
+    </div>
+    <div class="footer-copyright">
+      <span style="display:block;line-height: 26px;">鄂Copyright © <time>2024</time> 达梦国产化应用创新实验室 鄂ICP备18017926号-1</span>
+    </div>
+    <div class="mobile-footer-copyright">
+      <p class="item1">鄂Copyright © <time>2024 <span>达梦国产化应用创新实验室</span></p>
+      <span class="item2">鄂ICP备18017926号-1</span>
+    </div>
+  </div>
+</footer>
+  </div>
+  <div id="mobile-nav-dimmer"></div>
+  <nav id="mobile-nav">
+  <div id="mobile-nav-inner">
+    <ul id="mobile-nav-list" style="margin-bottom:20px;">
+      <a href="/document/dm/zh-cn/start/" class="mobile-nav-link">快速上手</a><a href="/document/dm/zh-cn/ops/" class="mobile-nav-link">运维指南</a><a href="/document/dm/zh-cn/app-dev/" class="mobile-nav-link is-active">应用开发指南</a><a href="/document/dm/zh-cn/sql-dev/" class="mobile-nav-link">SQL 开发指南</a><a href="/document/dm/zh-cn/faq/" class="mobile-nav-link">常见问题</a><a href="/document/dm/zh-cn/pm/" class="mobile-nav-link">产品手册</a>      
+    </ul>
+    
+      
+          <div class="side-mobile-nav-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="side-mobile-nav-link" onclick="toggel(this)" style="font-weight:800;">JAVA 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="develop-environment-prepare-java.html" class="side-mobile-nav-link ">JAVA 开发环境准备</a>
+<a style="display:block;padding-left:8px" href="java-jdbc.html" class="side-mobile-nav-link current">JDBC 接口</a>
+<a style="display:block;padding-left:8px" href="java-hibernate-frame.html" class="side-mobile-nav-link ">Hibernate 框架</a>
+<a style="display:block;padding-left:8px" href="java-iBatis-frame.html" class="side-mobile-nav-link ">iBatis 框架</a>
+<a style="display:block;padding-left:8px" href="java_Mybatis_frame.html" class="side-mobile-nav-link ">Mybatis 框架</a>
+<a style="display:block;padding-left:8px" href="java-MyBatis-Plus-frame.html" class="side-mobile-nav-link ">MyBatis-Plus 框架</a>
+<a style="display:block;padding-left:8px" href="java-spring-frame.html" class="side-mobile-nav-link ">Spring 框架</a>
+<a style="display:block;padding-left:8px" href="java-mycat_new.html" class="side-mobile-nav-link ">MyCat 框架</a>
+<a style="display:block;padding-left:8px" href="JAVA_ShardingJDBC.html" class="side-mobile-nav-link ">Sharding-JDBC框架</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="side-mobile-nav-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="side-mobile-nav-link" onclick="toggel(this)" style="font-weight:800;">C/C++ 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="c_c++_odbc.html" class="side-mobile-nav-link ">ODBC 接口</a>
+
+          <div class="side-mobile-nav-link-group" style="transition: all 0.3s ease-out; padding-left:8px;">
+            <a class="side-mobile-nav-link" onclick="toggel(this)" style="font-weight:400;">QT 接口<i class="iconfont second-icon">&#xe6a1;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="c_c++_qodbc.html" class="side-mobile-nav-link ">QODBC 编译</a>
+<a style="display:block;padding-left:8px" href="c_c++_qdm.html" class="side-mobile-nav-link ">QDM 编译</a></div>
+          </div>
+          <div ></div>
+        
+<a style="display:block;padding-left:8px" href="c_c++_proc.html" class="side-mobile-nav-link ">Pro*C 接口</a>
+<a style="display:block;padding-left:8px" href="c_c++_dpi.html" class="side-mobile-nav-link ">DPI 接口</a>
+<a style="display:block;padding-left:8px" href="lua-development.html" class="side-mobile-nav-link ">lua接口</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="side-mobile-nav-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="side-mobile-nav-link" onclick="toggel(this)" style="font-weight:800;">.NET 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="dot-Net-Data-Provider.html" class="side-mobile-nav-link ">.Net Data Provider</a>
+<a style="display:block;padding-left:8px" href="net-Dapper.html" class="side-mobile-nav-link ">Dapper 框架</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="side-mobile-nav-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="side-mobile-nav-link" onclick="toggel(this)" style="font-weight:800;">PHP 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="PHP_WSL2_Ubuntu.html" class="side-mobile-nav-link ">WSL2-Ubuntun 下使用 PHP</a>
+<a style="display:block;padding-left:8px" href="php_php_new.html" class="side-mobile-nav-link ">PHP 数据库接口</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="side-mobile-nav-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="side-mobile-nav-link" onclick="toggel(this)" style="font-weight:800;">Python 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="python-python.html" class="side-mobile-nav-link ">Python 数据库接口</a>
+<a style="display:block;padding-left:8px" href="python-flask.html" class="side-mobile-nav-link ">Flask 框架</a>
+<a style="display:block;padding-left:8px" href="python_environment.html" class="side-mobile-nav-link ">Python 开发环境准备</a>
+<a style="display:block;padding-left:8px" href="python-django.html" class="side-mobile-nav-link ">Django 框架</a>
+<a style="display:block;padding-left:8px" href="python-SQLAlchemy.html" class="side-mobile-nav-link ">SQLAlchemy 框架</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="side-mobile-nav-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="side-mobile-nav-link" onclick="toggel(this)" style="font-weight:800;">GO 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="go_gorm.html" class="side-mobile-nav-link ">GORM 框架</a>
+<a style="display:block;padding-left:8px" href="go_dm.html" class="side-mobile-nav-link ">DM 接口</a>
+<a style="display:block;padding-left:8px" href="go_odbc.html" class="side-mobile-nav-link ">ODBC接口</a></div>
+          </div>
+          <div class="bar-border"></div>
+        
+
+          <div class="side-mobile-nav-link-group top" style="display: none;transition: all 0.3s ease-out;">
+            <a class="side-mobile-nav-link" onclick="toggel(this)" style="font-weight:800;">JavaScript 语言<i class="iconfont top-icon">&#xe6a0;</i></a>
+            <div style="padding-left:8px"><a style="display:block;padding-left:8px" href="JavaScript_NodeJs.html" class="side-mobile-nav-link ">Node.js 框架</a></div>
+          </div>
+          <div class="bar-border"></div>
+        <script>
+
+  function isOpenWeb(group) {
+    const children = Array.from(group.children[1].children)
+    const isOpenStatus = children.map(function (element) {
+      if (element.className.indexOf('left-sidebar-link-group') >= 0) {
+        return isOpenWeb(element)
+      } else {
+        if (element.className.indexOf('current') >= 0) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }).reduce((a, b) => a || b, false)
+
+
+    if (isOpenStatus) {
+      if (group.className.indexOf('top') >= 0)
+        group.className = 'left-sidebar-link-group top open'
+      else
+        group.className = 'left-sidebar-link-group open'
+    }else{
+      if (group.className.indexOf('top') >= 0)
+        group.className = 'left-sidebar-link-group top '
+      else
+        group.className = 'left-sidebar-link-group'
+    }
+
+    return isOpenStatus
+  }
+
+  function calcuHeightWeb(group){
+    const link = group.children[0]
+    const div = group.children[1]
+    let  h = link.offsetHeight
+
+    if(group.className.indexOf('open')<0){
+
+    }else{
+      const cheight =  Array.from(div.children).map(element=>{
+        if (element.className.indexOf('left-sidebar-link-group') >= 0) {
+          return calcuHeightWeb(element)
+        } else {
+          return (element.offsetHeight)
+        }
+      }).reduce((a,b)=>a+b,0)
+
+      h = h + cheight
+    }
+
+    group.style.height = h + 'px'
+
+    return h
+  }
+
+  window.onload=function(){
+    // left sider display block
+
+    Array.from(document.querySelectorAll('.left-sidebar-link-group.top')).forEach(v=>{
+      v.style.display = "block";
+      v.nextElementSibling.style.display = "inherit"
+    })
+
+    Array.from(document.querySelectorAll('.left-sidebar-link-group.top')).forEach(v=>{
+      isOpenWeb(v)})
+
+    Array.from(document.querySelectorAll('.left-sidebar-link-group.top')).forEach(v=>{
+      calcuHeightWeb(v)})
+
+    Array.from(document.querySelectorAll('.left-sidebar-link')).forEach(v=>{
+      if(v.parentElement.className.indexOf('side-mobile-nav-link-group')>=0){
+        v.parentElement.classList.replace('side-mobile-nav-link-group','left-sidebar-link-group')
+      }
+    })
+
+  }
+
+  </script>
+    
+  <script>
+  document.querySelectorAll('.sidebar-title.left-siderbar').forEach(v=>v.onclick=()=>{
+    if(v.className.indexOf('open') >= 0){
+      v.className="sidebar-title left-siderbar"
+      v.nextElementSibling.style.height="0"
+    }else{      
+      {        
+        var x = document.querySelectorAll(".sidebar-title.left-siderbar");
+        var i;
+        for (i = 0; i < x.length; i++) {
+          x[i].nextElementSibling.style.height = "0";
+        }
+      }
+      v.className="sidebar-title left-siderbar open";
+      v.nextElementSibling.style.height = v.nextElementSibling.children.length * 28 +"px";
+    }
+  })
+  document.querySelectorAll('.sidebar-subtitle.second-menu').forEach(v=>v.onclick=()=>{
+    // 关闭
+    if(v.className.indexOf('expanded') >= 0){
+      v.className = "sidebar-subtitle second-menu"; 
+      v.parentElement.style.height = "28px";
+      v.parentElement.parentElement.style.height = v.parentElement.parentElement.children.length  * 28 +"px";
+
+
+    }else{
+      // 其他全部折叠，展开当前
+      {        
+        var x = document.querySelectorAll(".sidebar-subtitle.second-menu");
+        var i;
+        for (i = 0; i < x.length; i++) {
+          x[i].parentElement.style.height = "28px";
+          x[i].className = "sidebar-subtitle second-menu";
+        }
+      }
+      v.className="sidebar-subtitle second-menu expanded";
+      v.parentElement.style.height = (v.nextElementSibling.children.length +1) * 28 + "px";
+      
+      v.parentElement.parentElement.style.height = (v.nextElementSibling.children.length + v.parentElement.parentElement.children.length) * 28 +"px";
+    }
+  });
+  </script>
+    
+  </div>
+  <div id="mobile-lang-select-wrap">
+    <span id="mobile-lang-select-label"><i class="fa fa-globe"></i><span>简体中文</span></span>
+    <select id="mobile-lang-select" data-canonical="">
+      
+        <option value="zh-cn" selected>简体中文</option>
+      
+    </select>
+  </div>
+</nav>
+<script>
+Array.from(document.querySelectorAll('.side-mobile-nav-link-group.top')).forEach(v=>{
+  v.style.display = "block";
+  v.nextElementSibling.style.display = "inherit"
+})
+
+Array.from(document.querySelectorAll('.side-mobile-nav-link-group.top')).forEach(v=>{
+  isOpen(v)})
+
+Array.from(document.querySelectorAll('.side-mobile-nav-link-group.top')).forEach(v=>{
+  calcuHeight(v)})
+  
+function isOpen(group) {
+    const children = Array.from(group.children[1].children)
+    const isOpenStatus = children.map(function (element) {
+      if (element.className.indexOf('side-mobile-nav-link-group') >= 0) {
+        return isOpen(element)
+      } else {
+        if (element.className.indexOf('current') >= 0) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }).reduce((a, b) => a || b, false)
+
+
+    if (isOpenStatus) {
+      if (group.className.indexOf('top') >= 0)
+        group.className = 'side-mobile-nav-link-group top open'
+      else
+        group.className = 'side-mobile-nav-link-group open'
+    }else{
+      if (group.className.indexOf('top') >= 0)
+      group.className = 'side-mobile-nav-link-group top '
+    else
+      group.className = 'side-mobile-nav-link-group'
+    }
+
+    return isOpenStatus
+  } 
+  
+  function calcuHeight(group){
+    const link = group.children[0]
+    const div = group.children[1]
+    let  h = link.offsetHeight+1
+
+    if(group.className.indexOf('open')<0){
+
+    }else{
+      const cheight =  Array.from(div.children).map(element=>{
+        if (element.className.indexOf('side-mobile-nav-link-group') >= 0) {
+          return calcuHeight(element)
+        } else {
+          return (element.offsetHeight)
+        }
+      }).reduce((a,b)=>a+b,0)
+
+      h = h + cheight
+    }
+
+    group.style.height = h + 'px'
+
+    return h
+  }
+  function calcuHeightWeb(group){
+    const link = group.children[0]
+    const div = group.children[1]
+    let  h = link.offsetHeight
+
+    if(group.className.indexOf('open')<0){
+
+    }else{
+      const cheight =  Array.from(div.children).map(element=>{
+        if (element.className.indexOf('left-sidebar-link-group') >= 0) {
+          return calcuHeightWeb(element)
+        } else {
+          return (element.offsetHeight+0.2)
+        }
+      }).reduce((a,b)=>a+b,0)
+
+      h = h + cheight
+    }
+
+    group.style.height = h + 'px'
+
+    return h
+  }  
+  function toggel(temp) {
+  // web
+  if (temp.className.indexOf('side-mobile-nav') >= 0) {
+    if (temp.parentNode.className.indexOf("open") >= 0) {
+      if (temp.parentNode.className.indexOf("top") >= 0) {
+        temp.parentNode.className = 'side-mobile-nav-link-group top'
+      } else {
+        temp.parentNode.className = 'side-mobile-nav-link-group'
+      }
+    } else {
+      if (temp.parentNode.className.indexOf("top") >= 0) {
+        {
+          var x = document.querySelectorAll(".side-mobile-nav-link-group.top");
+          var i;
+          for (i = 0; i < x.length; i++) {
+            x[i].className = "side-mobile-nav-link-group top"
+          }
+        }
+        temp.parentNode.className = 'side-mobile-nav-link-group top open'
+      } else {
+        {
+          var y = document.querySelectorAll(".side-mobile-nav-link-group");
+          var i;
+          for (i = 0; i < y.length; i++) {
+            if (y[i].className.indexOf("top") < 0) {
+              y[i].className = 'side-mobile-nav-link-group'
+            }
+          }
+        }
+        temp.parentNode.className = 'side-mobile-nav-link-group open'
+      }
+    }
+
+    // 标记 open ...
+
+    Array.from(document.querySelectorAll('.side-mobile-nav-link-group.top')).forEach(v => {
+      calcuHeight(v)
+    })
+
+  } else {
+
+    if (temp.parentNode.className.indexOf("open") >= 0) {
+      if (temp.parentNode.className.indexOf("top") >= 0) {
+        temp.parentNode.className = 'left-sidebar-link-group top'
+      } else {
+        temp.parentNode.className = 'left-sidebar-link-group'
+      }
+    } else {
+      if (temp.parentNode.className.indexOf("top") >= 0) {
+        {
+          var x = document.querySelectorAll(".left-sidebar-link-group.top");
+          var i;
+          for (i = 0; i < x.length; i++) {
+            x[i].className = "left-sidebar-link-group top"
+          }
+        }
+        temp.parentNode.className = 'left-sidebar-link-group top open'
+      } else {
+        {
+          var y = document.querySelectorAll(".left-sidebar-link-group");
+          var i;
+          for (i = 0; i < y.length; i++) {
+            if (y[i].className.indexOf("top") < 0) {
+              y[i].className = 'left-sidebar-link-group'
+            }
+          }
+        }
+        temp.parentNode.className = 'left-sidebar-link-group open'
+      }
+    }
+
+    // 标记 open ...
+
+    Array.from(document.querySelectorAll('.left-sidebar-link-group.top')).forEach(v => {
+      calcuHeightWeb(v)
+    })
+  }
+
+}
+
+Array.from(document.querySelectorAll('#mobile-nav-inner .bar-border')).forEach(c => {
+  c.style.borderBottom = '1px solid #333';
+})
+Array.from(document.querySelectorAll('#mobile-nav-inner .side-mobile-nav-link-group')).forEach(c => {
+  if(c.className.indexOf('top')<0){
+    c.style.paddingLeft = '0px';
+  }
+})
+
+</script>
+  <!-- Scripts -->
+<!-- Cookie -->
+
+<!-- 
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
+ -->
+<!-- build:js build/js/main.js -->
+
+<script src="/document/dm/js/lang_select.js"></script>
+
+
+<script src="/document/dm/js/mobile_nav.js"></script>
+
+<!-- endbuild -->
+
+<!-- Algolia -->
+
+
+<script type="text/javascript">
+//document.getElementById('search-input-wrap').classList.add('on');
+//docsearch({
+//  apiKey: 'cdea7d4e47d84f6145b77e7f68689f35',
+//  indexName: 'hexo_zh-cn',
+//  inputSelector: '#search-input'
+//});
+</script>
+
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/document/dm/js/src/clipboard.min.js"></script>
+<script type="text/javascript" src="/document/dm/js/src/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/document/dm/js/src/clipboard-use.js"></script>
+<script type="text/javascript" src="/document/dm/js/src/icon.js?date=2024-12-11"></script>
+<script type="text/javascript" src="/document/dm/js/src/qrcode.min.js"></script>
+<script type="text/javascript" src="/document/dm/js/src/jweixin-1.6.0.js"></script>
+<script type="text/javascript" src="/document/dm/js/src/sha1.js"></script>
+<script type="text/javascript" src="/document/dm/js/src/timestamp.js"></script>
+<script type="text/javascript" src="/document/dm/js/src/random.js"></script>
+
+<style>
+html {
+  -webkit-text-size-adjust: none;
+}
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+.progress {
+  width: 100%;
+  top: 69px;
+  position: fixed;
+  height: 2px;
+  background: transparent;
+  border-radius: 0;
+  z-index: 31;
+}
+progress::-webkit-progress-bar{
+  background:#fff
+}
+progress::-webkit-progress-value{
+  background:#1094e8
+}
+progress::-moz-progress-bar{
+  background:#2e2fff;
+  border-top: none;
+  border-bottom: none;
+}
+
+.back-to-top .wechat-content .pop-img {
+    padding: 5px !important;
+}
+
+</style>
+</body>
+<script>
+//  生成二维码
+new QRCode(document.getElementById("qrcode"), {
+  width: 128,
+  height: 128, // 高度
+  text: location.href
+  // render: 'canvas' ,   // 设置渲染方式（有两种方式 table和canvas，默认是canvas）
+  // background: '#f0f',   // 背景色
+  // foreground: '#ff0'    // 前景色
+});
+
+// 获取微信token
+function getWechatToken(res){
+    var r_timestamp = timestamp(),
+    r_nonceStr = generateRandomAlphaNum(18),
+    r_jsapi_ticket = res.ticket || "",
+    r_url = location.href;
+
+    wx.config({
+      debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+      appId: 'wx9f722b93e81c672b', // 必填，公众号的唯一标识
+      timestamp: r_timestamp, // 必填，生成签名的时间戳
+      nonceStr: r_nonceStr, // 必填，生成签名的随机串
+      signature: sha1(`jsapi_ticket=${r_jsapi_ticket}&noncestr=${r_nonceStr}&timestamp=${r_timestamp}&url=${r_url}`), // 必填，签名
+      jsApiList: [
+        'updateAppMessageShareData',
+        'updateTimelineShareData'
+      ], // 必填，需要使用的JS接口列表
+    });
+}
+
+window.fetch(`https://eco.dameng.com/eco-system-server-biz/weixin/share/token`)
+    .then(res => res.json())
+    .then(json => json.result)
+    .then((result) => {
+      getWechatToken(result);
+    }).then(() => {
+      wx.ready(function () { //需在用户可能点击分享按钮前就先调用
+        // 分享给朋友
+        wx.updateAppMessageShareData({
+          title: document.title, // 分享标题
+          desc: document.querySelector(".article-content").innerText.slice(0, 50).replaceAll('\n', ''), // 分享描述
+          link: location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: `https://download.dameng.com/eco/assets/wechat_chatShare.png`, // 分享图标 res.coverLogo.url
+          success: function () {
+            // 设置成功
+            // console.log(`分享成功`);
+          },
+          cancel: function () {
+            // console.log(`分享已取消`);
+          },
+          fail: function (res) {
+            // console.log(`分享失败，原因：`, JSON.stringify(res));
+          }
+        });
+
+        // 分享到朋友圈
+        wx.updateTimelineShareData({
+          title: document.title, // 分享标题
+          link: location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: `https://download.dameng.com/eco/assets/wechat_friendShare.png`, // 分享图标
+          success: function () {
+            // 设置成功
+          }
+        })
+      });
+    })
+
+document.querySelector("progress").style.display = "none"
+
+function myFunction(){
+  let scroll_height = document.documentElement.scrollTop
+  let fixed_height = document.documentElement.clientHeight
+  let sum = document.documentElement.scrollHeight - fixed_height
+
+  let percent = (scroll_height/sum * 100)
+  document.querySelector("progress").value = percent
+
+  if(percent != 0){
+    document.querySelector("progress").style.display = "inherit"
+    document.querySelector("header").classList.add("has-border-and-shadow")
+  }else if(percent === 0 || percent === 100){
+    document.querySelector("progress").style.display = "none"
+    document.querySelector("header").classList.remove("has-border-and-shadow")
+  }
+}
+
+  var h = window.innerHeight;
+  var backtotop = document.querySelector(".backtop");
+  var CommonBody = document.querySelector("body");
+  var popoverWechat = document.querySelector(".popover-wechat");
+  var popoverPhone = document.querySelector(".popover-phone");
+  var popoverEmail = document.querySelector(".popover-email");
+  CommonBody.onscroll = function ScrollToTop(){
+      var scroll = document.body.scrollTop || document.documentElement.scrollTop;
+      if(scroll >= h -300){
+          backtotop.classList.remove("hidden");
+      }else{
+          backtotop.classList.add("hidden");
+      }
+
+      popoverWechat.style.display = "none";
+      popoverPhone.style.display = "none";
+      popoverEmail.style.display = "none";
+  };
+  backtotop.addEventListener("click", function(){
+      CommonBody.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+      })
+  });
+
+// footer 悬浮
+var iconWechat = document.querySelector(".icon.wechat");
+var iconPhone = document.querySelector(".icon.phone");
+var iconEmail = document.querySelector(".icon.email");
+iconWechat.addEventListener("click", function(event){
+  iconHidden();
+  popoverWechat.style.display = "initial";
+  event.stopPropagation()
+})
+iconWechat.addEventListener("mouseenter", function(event){
+  iconHidden();
+  popoverWechat.style.display = "initial";
+  event.stopPropagation()
+})
+iconWechat.addEventListener("mouseleave", function(event){
+  iconHidden();
+  event.stopPropagation()
+})
+iconPhone.addEventListener("click", function(event){
+  iconHidden();
+  popoverPhone.style.display = "initial";
+  event.stopPropagation()
+})
+iconPhone.addEventListener("mouseenter", function(event){
+  iconHidden();
+  popoverPhone.style.display = "initial";
+  event.stopPropagation()
+})
+iconPhone.addEventListener("mouseleave", function(event){
+  iconHidden();
+  event.stopPropagation()
+})
+iconEmail.addEventListener("click", function(event){
+  iconHidden();
+  popoverEmail.style.display = "initial";
+  event.stopPropagation()
+})
+iconEmail.addEventListener("mouseenter", function(event){
+  iconHidden();
+  popoverEmail.style.display = "initial";
+  event.stopPropagation()
+})
+iconEmail.addEventListener("mouseleave", function(event){
+  iconHidden();
+  event.stopPropagation()
+})
+CommonBody.addEventListener("click", function (event){
+  if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){
+    popoverWechat.style.display = "none";
+    popoverPhone.style.display = "none";
+    popoverEmail.style.display = "none";
+  }
+})
+
+function iconHidden() {
+  popoverWechat.style.display = "none";
+  popoverPhone.style.display = "none";
+  popoverEmail.style.display = "none";
+}
+
+  var weChatEr = document.querySelector(".we-chat");
+  var popContent = document.querySelector(".pop-content");
+  weChatEr.addEventListener("mouseenter", function(){
+      popContent.style.display = "block";
+  });
+  weChatEr.addEventListener("mouseleave", function(){
+      popContent.style.display = "none";
+  });
+
+  var wechatShare = document.querySelector(".wechat-share");
+  var wechatContent = document.querySelector(".wechat-content");
+  if(wechatShare && wechatContent) {
+      wechatShare.addEventListener("mouseenter", function () {
+        wechatContent.style.display = "block";
+      });
+      wechatShare.addEventListener("mouseleave", function () {
+        wechatContent.style.display = "none";
+      });
+  }
+</script>
+</html>

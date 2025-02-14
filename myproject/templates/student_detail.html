@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生详情</title>
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <td>id</td>
+        <td>姓名</td>
+        <td>年龄</td>
+        <td>性别</td>
+        <td>创建时间</td>
+        <td>更新时间</td>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ student_obj.id }}</td>
+            <td>{{ student_obj.name }}</td>
+            <td>{{ student_obj.age }}</td>
+            <td>{{ student_obj.sex }}</td>
+            <td>{{ student_obj.create_time }}</td>
+            <td>{{ student_obj.update_time }}</td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

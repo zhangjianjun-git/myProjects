@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>欢迎使用我的网站</title>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <div class="form-panel">
+            <form action="/myapp/login_auto/" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="login-form">
+                    <h1>登录</h1>
+                    <section class="form-section">
+                        <label for="username">账号</label>
+                        <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+                        {% if form.username.errors %}
+                            <span class="error-message"> {{ form.username.errors }}</span>
+                        {% endif %}
+                    </section>
+                    <section class="form-section">
+                        <label for="password">密码</label>
+                        <input type="password" id="password" name="password" placeholder="请输入密码" required/>
+                        {% if form.password.errors %}
+                            <span class="error-message"> {{ form.password.errors }}</span>
+                        {% endif %}
+                    </section>
+                    <span style="margin-bottom: 8px;">忘记密码?</span>
+
+                    <button type="submit">登录</button>
+                    <button type="button" class="alternative-login"> 使用<span
+                            style="font-weight: 900; color: #455a81">二维码</span>登录
+                    </button>
+                </div>
+            </form>
+            <form action="/myapp/register/" method="post">
+                {% csrf_token %}
+                <div class="registration-form" style="display: none">
+                    <h1>立即注册</h1>
+                    <section class="form-section">
+                        <label for="username">用户名</label>
+                        <input type="text" id="username" name="username"/>
+                    </section>
+                    <section class="form-section">
+                        <label for="email">邮箱</label>
+                        <input type="text" id="email" name="email"/>
+                    </section>
+                    <section class="form-section">
+                        <label for="password">密码</label>
+                        <input type="password" name="password" id="password"/>
+                    </section>
+                    <button type="submit">1注册</button>
+                    <button type="button" class="alternative-login"> 使用<span
+                            style="font-weight: 900; color: #455a81">二维码</span>扫码注册
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="registration-panel">
+            <h1 class="panel-title">还未注册？</h1>
+            <span class="subTitle">立即注册，发现大量机会！</span>
+            <button type="button" id="toggleForm" onclick="redirectToRegisterPage()">2注册</button>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/index.js' %}"></script>
+<script>
+    document.querySelector("input").addEventListener("invalid",
+        function (event) {
+            event.preventDefault();
+        });
+
+    function checkInput(input) {
+        let spanElement = input.nextElementSibling;
+        if (input.value && input.value.trim().length > 0) {
+            debugger
+            if (spanElement && spanElement.tagName.toLowerCase() === 'span') {
+                spanElement.style.display = 'none';
+            }
+        }
+    }
+
+    window.onload = function () {
+        // 获取所有input输入框元素
+        var inputElement = document.querySelectorAll("input");
+        // 为输入框添加失去焦点事件监听器
+        for (var i = 0; i < inputElement.length; i++) {
+            inputElement[i].addEventListener("blur", checkInput);
+        }
+    };
+
+</script>
+</body>
+</html>

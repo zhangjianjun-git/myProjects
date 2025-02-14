@@ -1,0 +1,16 @@
+.back-btn {
+    display: inline-block; /* 确保链接可以设置宽度和高度 */
+    background-color: #6200ea; /* 按钮的背景颜色 */
+    color: white; /* 按钮的文字颜色 */
+    padding: 10px 20px; /* 按钮的内边距 */
+    font-size: 16px; /* 按钮的文字大小 */
+    text-align: center; /* 文字居中 */
+    text-decoration: none; /* 去掉下划线 */
+    border-radius: 5px; /* 圆角 */
+    cursor: pointer; /* 鼠标悬停时显示为指针 */
+    transition: background-color 0.3s; /* 背景颜色变化的过渡效果 */
+}
+
+.back-btn:hover {
+    background-color: #3700b3; /* 鼠标悬停时的背景颜色 */
+}

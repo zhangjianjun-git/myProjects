@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% extends "admin/change_form.html" %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/back_btn.css' %}">
+</head>
+<body>
+
+    {% block submit_buttons_bottom %}
+    {{ block.super }}
+        <div class="submit-row">
+            <a href="{% url 'admin:myapp_teacher_changelist' %}" class="back-btn">返回列表</a>
+        </div>
+    {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+   {% extends "admin/change_form.html" %}
+    {% block submit_buttons_bottom %}
+    {{ block.super }}
+    <a href="{% url 'admin:myapp_student_changelist' %}" class="default">返回列表</a>
+    {% endblock %}
+
+</body>
+</html>
