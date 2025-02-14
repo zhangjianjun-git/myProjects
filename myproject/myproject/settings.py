@@ -153,18 +153,7 @@ CKEDITOR_UPLOAD_PATH = "upload"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-# CKEDITOR_CONFIGS = {
-#     'default': {
-#         'toolbar': 'full',
-#         'height': 300,
-#         'width': '100%',
-#         'extraPlugins': ','.join([
-#             'uploadimage',  # 确保包含上传插件
-#         ]),
-#     }
-# }
-
-
+# 自定义ckeditor配置
 # CKEDITOR_CONFIGS = {
 #     'default': {
 #         'toolbar': 'Custom',  # 工具条功能
