@@ -152,17 +152,3 @@ CKEDITOR_UPLOAD_PATH = "upload"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
-# 自定义ckeditor配置
-# CKEDITOR_CONFIGS = {
-#     'default': {
-#         'toolbar': 'Custom',  # 工具条功能
-#         'height': 300,  # 编辑器高度
-#         'width': 800,  # 编辑器宽
-#         'toolbar_Custom':[
-#             ['Source','Bold', 'Italic', 'Underline', 'Blockquote','Format','Font','FontSize'],
-#             ['TextColor','BGColor','Image','Smiley' ,'Link', 'Unlink','PasteFromWord'],
-#             ['JustifyCenter','JustifyRight','JustifyBlock']
-#         ]
-#     },
-# }
