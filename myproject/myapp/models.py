@@ -138,3 +138,18 @@ class StudentCourse(models.Model):
         verbose_name = "学生选课关系"  # 指定页面显示应用名称
         verbose_name_plural = "学生选课关系"  # 指定页面显示应用名称,全量指定
         unique_together = ('student', 'course')  # 指定联合唯一索引
+
+# 菜单模型
+class Menu(models.Model):
+    name = models.CharField(max_length=30, verbose_name='菜单名称')
+    url = models.CharField(max_length=100, verbose_name='菜单URL')
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, verbose_name='父菜单')
+    order = models.IntegerField(verbose_name='排序', default=0)
+
+    class Meta:
+        verbose_name = '菜单'
+        verbose_name_plural = verbose_name
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name

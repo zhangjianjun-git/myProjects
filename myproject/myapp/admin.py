@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 from django import forms
-from .models import Student, Class, Teacher
+from .models import Student, Class, Teacher,Menu
 from django.utils.html import format_html
 
 admin.site.site_header = "学管理系统"
@@ -63,6 +63,7 @@ class StudentAdmin(admin.ModelAdmin):
     def get_search_results(self, request, queryset, search_term):
         # 调用父类的get_search_results方法获取初始的查询集
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        Class.objects.prefetch_related('teacher').filter(name__icontains=search_term)
         # 检查搜索字段中是否包含'sex'并且搜索词是'男'
         if 'sex' in self.search_fields and search_term == '男':
             queryset = Student.objects.filter(sex='male')
@@ -107,7 +108,7 @@ class TeacherAdmin(admin.ModelAdmin):
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Class, ClassAdmin)
 admin.site.register(Teacher, TeacherAdmin)
-
+admin.site.register(Menu)
 # 使用装饰器来注册模型
 # @admin.register(Teacher)
 # class TeacherAdmin(admin.ModelAdmin):
