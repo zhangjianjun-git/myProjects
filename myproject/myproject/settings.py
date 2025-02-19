@@ -150,5 +150,9 @@ CKEDITOR_IMAGE_BACKEND = 'pillow'
 # 上传文件的存储路径和URL
 CKEDITOR_UPLOAD_PATH = "upload"
 
+# 允许同一域名下的页面嵌入
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

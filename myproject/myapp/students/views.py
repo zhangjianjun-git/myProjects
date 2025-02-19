@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
 from ..models import Student
 from django.core.paginator import Paginator
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 
+@xframe_options_sameorigin
 def student_list(request):
     students = Student.objects.all()
     if request.GET.get('name'):
@@ -25,6 +26,7 @@ def student_list(request):
         'per_page': limit,
         'current_page': page_obj.number,
     })
+
 
 # 定义一个函数，添加学生信息
 def student_create(request):

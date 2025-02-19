@@ -21,7 +21,7 @@
 <div class="layui-layout layui-layout-admin">
 
     <div class="layui-header">
-        <div class="layui-logo layui-bg-black">网站后台管理系统</div>
+        <div class="layui-logo layui-bg-black">迅捷资源管理系统</div>
         <!-- 头部区域（可配合layui 已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
 
@@ -171,14 +171,11 @@
         </a>
     </div>
 </div>
-<!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
 <script>
-    //JavaScript代码区域
     layui.use(['util', 'element'], function () {
         var element = layui.element;
         var util = layui.util;
         // var $ = layui.jquery;
-
 
         //触发tab事件
         var active = {
@@ -188,7 +185,7 @@
                 //关于tabAdd的方法所传入的参数可看layui的开发文档中基础方法部分
                 element.tabAdd('tab', {
                     title: name,
-                    content: '<iframe onload="FrameWH()" height="100%" width="100%" scrolling="auto" data-frameid="' + id + '"  frameborder="0" src="' + url + '">  </iframe>',
+                    content: '<iframe onload="FrameWH()" height="100%" width="100%" scrolling="auto" data-frameid="' + id + '"  frameborder="0" src="'+ url + '">  </iframe>',
                     id: id //规定好的id
                 })
                 element.render('tab');
@@ -216,7 +213,6 @@
                 active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"), dataid.attr("data-title"));
             } else {
                 //否则判断该tab项是否以及存在
-
                 var isData = false; //初始化一个标志，为false说明未打开该tab项 为true则说明已有
                 $.each($(".layui-tab-title li[lay-id]"), function () {
                     //如果点击左侧菜单栏所传入的id 在右侧tab项中的lay-id属性可以找到，则说明该tab项已经打开
@@ -237,7 +233,6 @@
         util.event('lay-header-event', {  //util 记得 声明 var util = layui.util
             //左侧菜单事件
             menuLeft: function (othis) {
-
                 var btn = $("#leftEnumIcon");
                 if (btn.hasClass('layui-icon-spread-left')) {
                     menuHide(btn);
@@ -245,11 +240,9 @@
                 } else if (btn.has('layui-icon-shrink-right')) {
                     btn.removeClass('btn-index');
                     menuShow(btn);
-
                 }
             }
         });
-
     })
 
     /*处理左侧栏的信息的三个方法*/
@@ -264,11 +257,9 @@
             if (!btn.hasClass('btn-index')) {
                 if (btn.hasClass('layui-icon-shrink-right')) {
                     menuHide(btn);
-
                 }
             }
         }
-
     });
     /*展示左侧栏*/
     function menuShow(btn) {
