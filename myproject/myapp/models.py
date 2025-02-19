@@ -148,6 +148,7 @@ class Menu(models.Model):
 
     class Meta:
         verbose_name = '菜单'
+        db_table = 't_menu'  # 指定数据表名称
         verbose_name_plural = verbose_name
         ordering = ['order']
 

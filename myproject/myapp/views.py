@@ -48,7 +48,7 @@ def login_auto_views(request):
             uname = data["username"]
             upwd = data["password"]
             user = Users.objects.filter(username=uname).first()
-            return render(request,"menus.html")
+            return redirect('/myapp/menus/menu_list/')
         else:
             # 如果GET请求或表单不合法，显示表单
             return render(request, 'index.html', {'form': form})
