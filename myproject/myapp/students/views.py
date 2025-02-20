@@ -13,9 +13,11 @@ def student_list(request):
     if request.GET.get('age'):
         students = students.filter(age=request.GET.get('age'))
     if request.GET.get('sex'):
-        students = students.filter(grade__icontains=request.GET.get('sex'))
-    if request.GET.get('create_time'):
-        students = students.filter(major__icontains=request.GET.get('create_time'))
+        students = students.filter(sex=request.GET.get('sex'))
+    if request.GET.get('enter_date_start'):
+        students = students.filter(enter_date__gte=request.GET.get('enter_date_start'))  # 起始日期
+    if request.GET.get('enter_date_end'):   # 结束日期
+        students = students.filter(enter_date__lte=request.GET.get('enter_date_end'))
     page = request.GET.get('page', 1)  # 获取页码，默认为1
     limit = request.GET.get('limit', 2)  # 获取每页显示的条数，默认为10
     paginator = Paginator(students, limit)
