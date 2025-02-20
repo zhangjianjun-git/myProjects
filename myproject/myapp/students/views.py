@@ -14,10 +14,24 @@ def student_list(request):
         students = students.filter(age=request.GET.get('age'))
     if request.GET.get('sex'):
         students = students.filter(sex=request.GET.get('sex'))
-    if request.GET.get('enter_date_start'):
-        students = students.filter(enter_date__gte=request.GET.get('enter_date_start'))  # 起始日期
-    if request.GET.get('enter_date_end'):   # 结束日期
-        students = students.filter(enter_date__lte=request.GET.get('enter_date_end'))
+
+    enter_date_range = request.GET.get('enter_date_range', '')
+    if enter_date_range:
+        # 使用 ' - ' 分割字符串，获取开始日期和结束日期
+        start_date, end_date = enter_date_range.split(' - ')
+        # 这里 start_date 和 end_date 就是具体的日期字符串
+        # 你可以根据需要将它们转换为日期对象或者其他格式
+        # 例如：
+        # start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        # end_date = datetime.strptime(end_date, '%Y-%m-%d')
+    else:
+        # 如果没有选择日期范围，则 start_date 和 end_date 为 None 或者默认值
+        start_date = None
+        end_date = None
+    if start_date is not None:  # 起始日期
+        students = students.filter(enter_date__gte=start_date)
+    if end_date is not None:   # 结束日期
+        students = students.filter(enter_date__lte=end_date)
     page = request.GET.get('page', 1)  # 获取页码，默认为1
     limit = request.GET.get('limit', 2)  # 获取每页显示的条数，默认为10
     paginator = Paginator(students, limit)
