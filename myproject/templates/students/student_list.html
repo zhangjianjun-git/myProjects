@@ -116,7 +116,7 @@
                 {field: 'sex', title: '性别', width: 120},
                 {field: 'age', title: '年龄', width: 120},
                 {field: 'address', title: '家庭住址', width: 150},
-                {field: 'enter_date', title: '入学时间', width: 100},
+                {field: 'enter_date', title: '入学时间', width: 110},
                 {field: 'operate', title: '操作', width: 200, align: 'center', toolbar: '#barDemo'}
             ]]
             , page: {
@@ -128,7 +128,7 @@
             },
             limit: 5, //设置每页显示的数据条数
             limits: [5, 10, 15, 20, 25, 50], //设置分页每页条数的选择项
-            unresize: true  //是否禁用拖动列宽调整功能
+            unresize: false  //是否禁用拖动列宽调整功能
         });
 
         // 监听行工具事件：也就是编辑与删除的处理事件
