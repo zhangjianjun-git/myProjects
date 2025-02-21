@@ -3,6 +3,8 @@ from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.forms.models import model_to_dict
+
 
 # 定义登录用户模型
 class Users(models.Model):
@@ -30,16 +32,19 @@ class Class(models.Model):
     grade = models.CharField(verbose_name='年级', max_length=50)  # 年级
     # remarks = models.TextField(verbose_name='备注', blank=True)  # 备注
     # remarks = RichTextField(verbose_name='备注', blank=True)  # 备注
-    remarks = RichTextUploadingField(verbose_name='备注', blank=True,config_name='default')
-    teacher = models.ManyToManyField('Teacher',verbose_name='老师')
+    remarks = RichTextUploadingField(verbose_name='备注', blank=True, config_name='default')
+    teacher = models.ManyToManyField('Teacher', verbose_name='老师')
+
     # 定义元类,指定数据表名称
     class Meta:
         db_table = 't_class'  # 指定数据表名称
         verbose_name = "班级信息"  # 指定页面显示应用名称
         verbose_name_plural = "班级信息"  # 指定页面显示应用名称,全量指定
+
     # 定义一个返回的名称,默认返回self
     def __str__(self):
         return self.name
+
 
 # 定义课程模型
 class Course(models.Model):
@@ -47,6 +52,7 @@ class Course(models.Model):
     teacher = models.ForeignKey('Teacher', verbose_name='教师', on_delete=models.CASCADE)
     price = models.DecimalField(verbose_name='课程价格', max_digits=10, decimal_places=2)
     remarks = RichTextUploadingField(verbose_name='备注', blank=True)
+
     # 定义元类,指定数据表名称
     class Meta:
         db_table = 't_course'  # 指定数据表名称
@@ -55,7 +61,7 @@ class Course(models.Model):
         # ordering = ['price']  # 指定排序字段
 
     def __str__(self):
-            return self.name
+        return self.name
 
 
 # 定义老师模型
@@ -70,6 +76,7 @@ class Teacher(models.Model):
     age = models.IntegerField(verbose_name='年龄', validators=[MinValueValidator(20), MaxValueValidator(100)])
     address = models.CharField(verbose_name='家庭住址', max_length=250, blank=True)
     remarks = RichTextUploadingField(verbose_name='备注', blank=True)
+
     # 定义元类,指定数据表名称
     class Meta:
         db_table = 't_teacher'  # 指定数据表名称
@@ -79,6 +86,7 @@ class Teacher(models.Model):
 
     def __str__(self):
         return self.name
+
 
 # 定义学生模型
 class Student(models.Model):
@@ -97,7 +105,7 @@ class Student(models.Model):
     enter_date = models.DateField(null=True, blank=True, verbose_name='入学时间')
     remarks = RichTextField(verbose_name='备注', blank=True)
     # 关联班级
-    sclass = models.ForeignKey("Class",on_delete=models.CASCADE,blank=True,null=True,verbose_name='班级')
+    sclass = models.ForeignKey("Class", on_delete=models.CASCADE, blank=True, null=True, verbose_name='班级')
 
     # 定义元类,指定数据表名称
     class Meta:
@@ -105,6 +113,19 @@ class Student(models.Model):
         verbose_name = "学生信息"  # 指定页面显示应用名称
         verbose_name_plural = "学生信息"  # 指定页面显示应用名称,全量指定
         # ordering = ['age']  # 指定排序字段
+
+    def student_to_dict(student):
+        return model_to_dict(student)
+
+    # 精细地控制序列化的过程，可以手动创建字典：
+    def student_to_dict_detail(student):
+        return {
+            'id': student.id,
+            'name': student.name,
+            'age': student.age,
+            'sex': student.sex,
+            'enter_date': student.enter_date
+        }
 
     # 定义一个返回的名称,默认返回self
     def __str__(self):
@@ -138,6 +159,7 @@ class StudentCourse(models.Model):
         verbose_name = "学生选课关系"  # 指定页面显示应用名称
         verbose_name_plural = "学生选课关系"  # 指定页面显示应用名称,全量指定
         unique_together = ('student', 'course')  # 指定联合唯一索引
+
 
 # 菜单模型
 class Menu(models.Model):
