@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-<div class="layui-container">
+<div class="demoTable">
     <form class="layui-form" action="{% url 'student_list' %}" method="get" id="searchForm">
         <div class="layui-form-item">
             <div class="layui-inline">
@@ -60,18 +60,36 @@
 
             <div class="layui-inline">
                 <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="formDemo" id="demoReload">查询</button>
+                    <!--  <button class="layui-btn" lay-filter="linkSearch" id="search" data-type="reload">查询</button> -->
+                    <button id="search" class="layui-btn layui-btn-normal" lay-submit
+                            lay-filter="linkSearch">
+                        <i class="layui-icon">查询&#xe615;</i>
+                    </button>
                     <button class="layui-btn layui-btn-primary" type="reset" onclick="resetForm()">重置</button>
                 </div>
             </div>
         </div>
     </form>
-    <!-- 新增操作按钮 -->
-    <button class="layui-btn" onclick="addStudent()">新增</button>
-    <!-- 批量删除操作按钮 -->
-    <button class="layui-btn layui-btn-danger" onclick="batchDelete()">批量删除</button>
 
-    <table id="demo" lay-filter="test"></table>
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">新增</button>
+            <button class="layui-btn layui-btn-sm" lay-event="deleteCheckData" style="background-color: #ef4136">
+                批量删除
+            </button>
+        </div>
+    </script>
+
+   <script type="text/html" id="add_event">
+        {#    功能按钮，通过lay-event绑定 eg：lay-event="add_link"#}
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add_link"><i class="layui-icon">添加</i>
+            </button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete_link">批量删除</button>
+        </div>
+    </script>
+
+    <table id="demo" lay-filter="test" lay-filter="linkList"></table>
 </div>
 
 <script type="text/html" id="barDemo">
@@ -95,9 +113,10 @@
             elem: '#demo',
             url: '/myapp/students/get_students_page',
             method: 'get',
-            id: 'testReload',
-            toolbar: true,//是否开启工具栏
+            id: 'studentTableReload',
+            toolbar: '#add_event',  // 开启头部工具栏，并为其绑定左侧模板
             page: true, //开启分页功能
+          //  even: true, //设置隔行背景
             request: {
                 pageName: 'pageNum',  // 页码的参数名称，默认：page
                 limitName: 'pageSize'   // 每页数据量的参数名，默认：limit
@@ -111,11 +130,15 @@
             }
             , cols: [[
                 {type: 'checkbox', fixed: 'left'},
-                {field: 'id', title: 'ID序号', width: 100, sort: true},
+                {
+                    field: 'id', title: 'ID序号', width: 100, sort: true, templet: function (data) {
+                        return data.id
+                    }
+                },
                 {field: 'name', title: '姓名', width: 120},
                 {field: 'sex', title: '性别', width: 120},
                 {field: 'age', title: '年龄', width: 120},
-                {field: 'address', title: '家庭住址', width: 150},
+                {field: 'address', title: '家庭住址', width: 230},
                 {field: 'enter_date', title: '入学时间', width: 110},
                 {field: 'operate', title: '操作', width: 200, align: 'center', toolbar: '#barDemo'}
             ]]
@@ -126,8 +149,8 @@
                 first: false, // 不显示首页
                 last: false   // 不显示尾页
             },
-            limit: 5, //设置每页显示的数据条数
-            limits: [5, 10, 15, 20, 25, 50], //设置分页每页条数的选择项
+            limit: 2, //设置每页显示的数据条数
+            limits: [2,5, 10, 15, 20, 25, 50], //设置分页每页条数的选择项
             unresize: false  //是否禁用拖动列宽调整功能
         });
 
@@ -161,36 +184,35 @@
             }
         });
 
-        // 搜索后的重载
-        let $ = layui.$, active = {
-            reload: function () {
-                var demoReload = $('#demoReload');
-                //执行重载
-                table.reload('testReload', {
-                    url: "/search_page",
-                    page: {
-                        curr: 1,
-                        limits: [1]
-                    }
-                    , where: {
-                        hostname: demoReload.val()
-                    }
-                }, 'data');
-            }
-        };
+        // 查询按钮点击事件
+        form.on('submit(linkSearch)', function (data) {
+            // 查询， 获取表单数据
+            let formData = data.field;
+            let name = formData.name,
+                age = formData.age,
+                sex = formData.sex,
+                address = formData.address,
+                enter_date_range = formData.enter_date_range;
+            ;
 
-        // 绑定搜索事件
-        $('.demoTable .layui-btn').on('click', function () {
-            let type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
+            table.reload('studentTableReload', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {    // 查询条件
+                    name: name,
+                    age: age,
+                    sex: sex,
+                    address: address,
+                    enter_date_range: enter_date_range
+                },
+                method: 'get',
+               // contentType: "application/json;charset=utf-8",
+                url: '/myapp/students/get_students_page'
+            });
+            return false;
         });
 
-        //监听提交
-        form.on('submit(formDemo)', function (data) {
-            //查询表单提交，这里可以进行一些数据验证，比如验证数据
-            alert(JSON.stringify(data.field));
-            return true;
-        });
     });
 
     // 示例操作函数

@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8" name="referrer" content="no-referrer">
-    <meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes"/>
+    <meta http-equiv="Content-Type" name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网站管理后台</title>
     <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
@@ -16,18 +17,29 @@
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #2d8cf0;
+        }
+
+        .layui-bg-cyan {
+            background-color: #333333f0 !important;
+        }
+    </style>
+
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
 
     <div class="layui-header">
-        <div class="layui-logo layui-bg-black">迅捷资源管理系统</div>
+        <div class="layui-logo" style="color: white; font-size: 20px;">迅捷资源管理系统</div>
         <!-- 头部区域（可配合layui 已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
 
             <!-- web、移动端显示 -->
             <li class="layui-nav-item layui-show-xs-inline-block " lay-header-event="menuLeft">
-                <a href="javascript:;" title="展示或者隐藏垂直工具栏"> <i id="leftEnumIcon" class="layui-icon layui-icon-spread-left"></i></a>
+                <a href="javascript:;" title="展示或者隐藏垂直工具栏"> <i id="leftEnumIcon"
+                                                                          class="layui-icon layui-icon-spread-left"></i></a>
             </li>
 
             <!--刷新当前页面-->
@@ -40,7 +52,8 @@
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item layui-hide layui-show-md-inline-block">
                 <a href="javascript:;">
-                    <img src="https://b-ssl.duitang.com/uploads/item/201709/30/20170930100815_UXS2k.gif" class="layui-nav-img">
+                    <img src="https://b-ssl.duitang.com/uploads/item/201709/30/20170930100815_UXS2k.gif"
+                         class="layui-nav-img">
                     nickname or username
                 </a>
                 <dl class="layui-nav-child">
@@ -62,7 +75,7 @@
     </div>
 
     <!--左侧管理栏目-->
-    <div class="layui-side layui-bg-black">
+    <div class="layui-side layui-bg-cyan">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="nav-tree">
@@ -73,7 +86,9 @@
                             {% if menu.menu_set.all %}
                                 <dl class="layui-nav-child">
                                     {% for sub_menu in menu.menu_set.all %}
-                                        <dd><a class="site-tab-active" data-url="{{ sub_menu.url }}" href="javascript:;" data-type="tabAdd" data-id="{{ sub_menu.order }}" data-title="{{ sub_menu.name }}" >{{ sub_menu.name }}</a>
+                                        <dd><a class="site-tab-active" data-url="{{ sub_menu.url }}" href="javascript:;"
+                                               data-type="tabAdd" data-id="{{ sub_menu.order }}"
+                                               data-title="{{ sub_menu.name }}">{{ sub_menu.name }}</a>
                                         </dd>
                                     {% endfor %}
                                 </dl>
@@ -85,9 +100,11 @@
                 <li class="layui-nav-item">
                     <a class="" href="javascript:;">博客日记</a>
                     <dl class="layui-nav-child">
-                        <dd><a class="site-tab-active" data-url="/admin/article/type" data-type="tabAdd" data-id="leixingguanli" data-title="类型管理"
+                        <dd><a class="site-tab-active" data-url="/admin/article/type" data-type="tabAdd"
+                               data-id="leixingguanli" data-title="类型管理"
                                href="javascript:;">类型管理</a></dd>
-                        <dd><a class="site-tab-active" data-url="/admin/article1/type2" data-type="tabAdd" data-id="wenzgl" data-title="文章管理" href="javascript:;">文章管理</a></dd>
+                        <dd><a class="site-tab-active" data-url="/admin/article1/type2" data-type="tabAdd"
+                               data-id="wenzgl" data-title="文章管理" href="javascript:;">文章管理</a></dd>
                         <dd><a href="javascript:;">公告管理</a></dd>
                     </dl>
                 </li>
@@ -109,7 +126,8 @@
                     </dl>
                 </li>
                 <li class="layui-nav-item">
-                    <a data-url="/news_list" data-id="3" data-title="新闻列表" class="site-tab-active" href="javascript:;" data-type="tabAdd">新闻列表</a>
+                    <a data-url="/news_list" data-id="3" data-title="新闻列表" class="site-tab-active"
+                       href="javascript:;" data-type="tabAdd">新闻列表</a>
                 </li>
                 <li class="layui-nav-item"><a href="javascript:;">标签管理</a></li>
                 <li class="layui-nav-item"><a href="">链接管理</a></li>
@@ -165,7 +183,8 @@
         <!-- 底部固定区域 -->
         Copyright: <span id="copyrightIntro">@2026-2029</span>
         备案号： <a href="http://beian.miit.gov.cn" target="_blank"><span id="icp">1111111</span></a>
-        <a target="_blank" href="http://beian.miit.gov.cn" style="display:inline-block; text-decoration:none;height:20px;line-height:20px;">
+        <a target="_blank" href="http://beian.miit.gov.cn"
+           style="display:inline-block; text-decoration:none;height:20px;line-height:20px;">
             <img tsrc="/layui/images/face/0.gif" style="float:left;"/>
             <span id="addrIcp"> 66666</span>
         </a>
@@ -185,7 +204,7 @@
                 //关于tabAdd的方法所传入的参数可看layui的开发文档中基础方法部分
                 element.tabAdd('tab', {
                     title: name,
-                    content: '<iframe onload="FrameWH()" height="100%" width="100%" scrolling="auto" data-frameid="' + id + '"  frameborder="0" src="'+ url + '">  </iframe>',
+                    content: '<iframe onload="FrameWH()" height="100%" width="100%" scrolling="auto" data-frameid="' + id + '"  frameborder="0" src="' + url + '">  </iframe>',
                     id: id //规定好的id
                 })
                 element.render('tab');
@@ -261,6 +280,7 @@
             }
         }
     });
+
     /*展示左侧栏*/
     function menuShow(btn) {
         btn.removeClass('layui-icon-shrink-right').addClass('layui-icon-spread-left');
@@ -269,6 +289,7 @@
         $(".layui-body").animate({left: '200px'});
         $(".layui-footer").animate({left: '200px'});
     }
+
     /*隐藏左侧栏*/
     function menuHide(btn) {
         btn.removeClass(' layui-icon-spread-left').addClass('layui-icon-shrink-right');
@@ -280,8 +301,8 @@
 
     /*iframe 高度自适应事件*/
     function FrameWH() {
-        var h = $(window).height()-200;
-        $("iframe").css("height",h+"px");
+        var h = $(window).height() - 200;
+        $("iframe").css("height", h + "px");
         $(window).resize(function () {
             FrameWH();
         });

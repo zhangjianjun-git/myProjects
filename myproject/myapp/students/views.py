@@ -7,9 +7,7 @@ from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 from ..models import Student
 from ..utils.json_utils import DateEncoder
-def student_list(request):
-    students = Student.objects.all()
-    return render(request, "students/student_list.html")
+from django.views.decorators.csrf import csrf_exempt
 
 @xframe_options_sameorigin
 def get_students_page(request):
@@ -59,9 +57,23 @@ def get_students_page(request):
         page_obj = paginator.page(1)
     # 序列化数据
     # data_list = list(data.values())  # 或者使用 serializers.serialize('json', data)
-    data_list = list(page_obj.object_list.values(
-        'id', 'name', 'age', 'sex', 'address', 'enter_date'
-    ))
+    # data_list = list(page_obj.object_list.values(
+    #     'id', 'name', 'age', 'sex', 'address', 'enter_date'
+    # ))
+
+    # 定义 sex 字段的显示映射
+    sex_map = {'male': '男', 'female': '女'}
+    data_list = []
+    for item in page_obj.object_list:
+        sex_display = sex_map.get(item.sex, item.sex)  # 转换 sex 字段的显示
+        data_list.append({
+            'id': item.id,
+            'name': item.name,
+            'age': item.age,
+            'sex': sex_display,
+            'address': item.address,
+            'enter_date': item.enter_date.strftime('%Y-%m-%d')
+        })
 
     # 创建一个响应数据字典，包含分页数据和分页相关信息
     response_data = {
@@ -75,7 +87,11 @@ def get_students_page(request):
     }
 
     # 将响应数据封装成JsonResponse返回给前端
-    return JsonResponse(response_data)
+    return JsonResponse(response_data, safe=False)
+
+
+def student_list(request):
+    return render(request, "students/student_list.html")
 
 
 # 定义一个函数，添加学生信息
