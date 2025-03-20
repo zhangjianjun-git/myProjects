@@ -182,30 +182,30 @@
                                 //检验表单必填字段
                                 let form_data = JSON.parse(json_data);
                                 if (!form_data.name) {
-                                    layer.msg('姓名不能为空', {icon: 5});
+                                    parent.layer.msg('姓名不能为空', {icon: 5});
                                     iframe.contentWindow.document.querySelector('input[name="name"]').focus();
                                     return false;
                                 }
                                 if (!form_data.age) {
-                                    layer.msg('年龄不能为空', {icon: 5});
+                                    parent.layer.msg('年龄不能为空', {icon: 5});
                                     // 鼠标定位到输入框
                                     iframe.contentWindow.document.querySelector('input[name="age"]').focus();
                                     return false;
                                 }
                                 if (!form_data.sex) {
-                                    layer.msg('性别不能为空', {icon: 5}, function () {
+                                    parent.layer.msg('性别不能为空', {icon: 5}, function () {
                                         iframe.contentWindow.document.querySelector('input[name="sex"]').focus();
                                     });
                                     return false;
                                 }
                                 if (!form_data.address) {
-                                    layer.msg('家庭住址不能为空', {icon: 5},function () {
+                                    parent.layer.msg('家庭住址不能为空', {icon: 5},function () {
                                           iframe.contentWindow.document.querySelector('input[name="address"]').focus();
                                     });
                                     return false;
                                 }
                                 if (!form_data.enter_date) {
-                                    layer.msg('入学时间不能为空', {icon: 5},function () {
+                                    parent.layer.msg('入学时间不能为空', {icon: 5},function () {
                                           iframe.contentWindow.document.querySelector('input[name="enter_date"]').focus();
                                     });
                                     return false;
@@ -227,7 +227,7 @@
                                     window.location.reload();
                                 }
                             });
-                            layer.close(index);
+                            parent.layer.close(index);
                         }
                     });
                     break;
