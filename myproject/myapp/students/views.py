@@ -2,12 +2,13 @@ import json
 
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
+from ..forms import StudentForm
 from ..models import Student
-from ..utils.json_utils import DateEncoder
 from django.views.decorators.csrf import csrf_exempt
+
 
 @xframe_options_sameorigin
 def get_students_page(request):
@@ -94,18 +95,23 @@ def student_list(request):
     return render(request, "students/student_list.html")
 
 
+def student_add(request):
+    form = StudentForm()
+    # 设置性别默认值为男
+    form.fields['sex'].initial = 'male'
+    return render(request, 'students/student_add.html', {'form': form})
+
+
 # 定义一个函数，添加学生信息
 def student_create(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        age = request.POST.get("age")
-        gender = request.POST.get("gender")
-        student_obj = Student(name=name, age=age, gender=gender)
-
-        student_obj.save()  # 保存新增的学生信息
-        return HttpResponse("添加成功！")  # 返回一个添加成功的提示信息
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('student_list')  # 假设有一个学生列表页
     else:
-        return render(request, "student_add.html")
+        form = StudentForm()
+    return render(request, 'students/student_add.html', {'form': form})
 
 
 # 定义一个函数，根据学生id修改学生信息
@@ -121,7 +127,7 @@ def student_update(request, pk):
         student_obj.save()  # 保存修改后的信息
         return HttpResponse("修改成功！")  # 返回一个修改成功的提示信息
     else:
-        return render(request, "student_update.html", {"student_obj": student_obj})  # 跳转到修改页面
+        return render(request, "students/student_update.html", {"student_obj": student_obj})  # 跳转到修改页面
 
 
 # 定义一个函数，根据学生id删除学生信息
@@ -131,6 +137,18 @@ def student_delete(request, pk):
     return HttpResponse("删除成功！")  # 返回一个删除成功的提示信息
 
 
+# 批量删除学生
+@csrf_exempt
+def student_batch_delete(request):
+    if request.method == "POST":
+        ids = request.POST.get("ids")
+        ids_list = json.loads(ids)
+        Student.objects.filter(id__in=ids_list).delete()
+        return JsonResponse({"code": 0, "msg": "批量删除成功！"})
+    else:
+        return JsonResponse({"code": 1, "msg": "请求方式错误！"})
+
+
 def student_detail(request, pk):
     student_obj = Student.objects.get(id=pk)
-    return render(request, "student_detail.html", {"student_obj": student_obj})
+    return render(request, "students/student_detail.html", {"student_obj": student_obj})

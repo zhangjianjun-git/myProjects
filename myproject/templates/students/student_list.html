@@ -80,7 +80,7 @@
         </div>
     </script>
 
-   <script type="text/html" id="add_event">
+    <script type="text/html" id="add_event">
         {#    功能按钮，通过lay-event绑定 eg：lay-event="add_link"#}
         <div class="layui-btn-container">
             <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add_link"><i class="layui-icon">添加</i>
@@ -89,7 +89,7 @@
         </div>
     </script>
 
-    <table id="demo" lay-filter="test" lay-filter="linkList"></table>
+    <table id="demo" lay-filter="linkList"></table>
 </div>
 
 <script type="text/html" id="barDemo">
@@ -116,7 +116,7 @@
             id: 'studentTableReload',
             toolbar: '#add_event',  // 开启头部工具栏，并为其绑定左侧模板
             page: true, //开启分页功能
-          //  even: true, //设置隔行背景
+            //  even: true, //设置隔行背景
             request: {
                 pageName: 'pageNum',  // 页码的参数名称，默认：page
                 limitName: 'pageSize'   // 每页数据量的参数名，默认：limit
@@ -150,12 +150,128 @@
                 last: false   // 不显示尾页
             },
             limit: 2, //设置每页显示的数据条数
-            limits: [2,5, 10, 15, 20, 25, 50], //设置分页每页条数的选择项
+            limits: [2, 5, 10, 15, 20, 25, 50], //设置分页每页条数的选择项
             unresize: false  //是否禁用拖动列宽调整功能
         });
 
+        //添加和批量删除按钮事件
+        table.on('toolbar(linkList)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id),
+                data = checkStatus.data;
+            data = JSON.parse(JSON.stringify(data));
+            switch (obj.event) {
+                case 'add_link':     // lay-event自定义的新增按钮toolbar事件
+                    parent.layer.open({
+                        type: 2,
+                        title: "新增地址链接操作",
+                        area: ['600px', '450px'],
+                        fix: false,
+                        maxmin: true,
+                        shadeClose: true,
+                        shade: 0.4,
+                        {#skin: 'layui-layer-normal',#}
+                        skin: 'layui-layer-rim',
+                        content: ["/myapp/students/student_add", "no"],     // 新增链接，窗口页面
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            //检验表单必填字段
+                            let iframe = $(layero).find("iframe")[0];
+                            if (iframe.contentWindow.callbackdata) {
+                                let json_data = iframe.contentWindow.callbackdata();
+                                debugger;
+                                //检验表单必填字段
+                                let form_data = JSON.parse(json_data);
+                                if (!form_data.name) {
+                                    layer.msg('姓名不能为空', {icon: 5});
+                                    iframe.contentWindow.document.querySelector('input[name="name"]').focus();
+                                    return false;
+                                }
+                                if (!form_data.age) {
+                                    layer.msg('年龄不能为空', {icon: 5});
+                                    // 鼠标定位到输入框
+                                    iframe.contentWindow.document.querySelector('input[name="age"]').focus();
+                                    return false;
+                                }
+                                if (!form_data.sex) {
+                                    layer.msg('性别不能为空', {icon: 5}, function () {
+                                        iframe.contentWindow.document.querySelector('input[name="sex"]').focus();
+                                    });
+                                    return false;
+                                }
+                                if (!form_data.address) {
+                                    layer.msg('家庭住址不能为空', {icon: 5},function () {
+                                          iframe.contentWindow.document.querySelector('input[name="address"]').focus();
+                                    });
+                                    return false;
+                                }
+                                if (!form_data.enter_date) {
+                                    layer.msg('入学时间不能为空', {icon: 5},function () {
+                                          iframe.contentWindow.document.querySelector('input[name="enter_date"]').focus();
+                                    });
+                                    return false;
+                                }
+                            }
+
+                            // 从iframe中拿到data，获取post数据
+                            let json_data = $(layero).find("iframe")[0].contentWindow.callbackdata();
+                            alert(json_data);
+                            $.ajax({
+                                url: "/myapp/students/student_create",  // 新增链接窗口中的数据处理
+                                type: "post",
+                                datatype: "json",
+                                data: json_data,
+                                async: false,
+                                cache: true,
+                                success: function () {
+                                    // 刷新太快了，新增接口，network中没有返回数据
+                                    window.location.reload();
+                                }
+                            });
+                            layer.close(index);
+                        }
+                    });
+                    break;
+                case 'delete_link':
+                    // 获取勾选了的CheckBox对应的id->vals里面
+                    let vals = new Array();
+                    $("td .layui-form-checked").parents("tr").children('[data-field=id]').each(function () {
+                        vals.push($(this).text());
+                        console.log(vals);
+                    });
+                    if (vals.length == 0) {  // 未勾选时，提示
+                        layer.open({
+                            title: "提示"
+                            , content: "请选择需要删除的数据"
+                        });
+                        return false
+                    }
+                    layer.confirm("确定要全部删除吗？", {
+                        btn: ["确定", "取消"],
+                        yes: function (index) {
+                            let vals = new Array();
+                            $("td .layui-form-checked").parents("tr").children('[data-field=id]').each(function () {
+                                vals.push($(this).attr("data-content"));
+                                console.log(vals);
+                            });
+                            $.ajax({
+                                url: "/myapp/students/student_batch_delete"      // 批量删除接口
+                                , type: "post"
+                                , data: JSON.stringify({
+                                    "vals": vals
+                                })
+                                , datatype: "json"
+                                , success: function () {
+                                    parent.location.reload()        // 删除成功后刷新页面
+                                }
+                            })
+                        },
+                    });
+            }
+            ;
+        });
+
         // 监听行工具事件：也就是编辑与删除的处理事件
-        table.on('tool(test)', function (obj) {
+        table.on('tool(linkList)', function (obj) {
             let data = obj.data;
             if (obj.event === 'del') {
                 layer.confirm('真的要删除本行数据吗 ?', function (index) {
@@ -207,7 +323,7 @@
                     enter_date_range: enter_date_range
                 },
                 method: 'get',
-               // contentType: "application/json;charset=utf-8",
+                // contentType: "application/json;charset=utf-8",
                 url: '/myapp/students/get_students_page'
             });
             return false;

@@ -1,15 +1,83 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>新增学生信息</title>
+  <meta charset="utf-8">
+  <title>Layui单选框示例</title>
+  <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
 </head>
 <body>
-    <h1>新增学生信息</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">保存</button>
-    </form>
+<form id="addStudentForm" class="layui-form" action="">
+
+     {% csrf_token %}
+        {% for field in form %}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{{ field.label }}</label>
+                <div class="layui-input-block">
+                    {% if field.field.widget.input_type == 'text' %}
+                        <input type="text" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}"
+                               required="{{ field.field.required }}" lay-verify="required"
+                               placeholder="请输入{{ field.label }}" autocomplete="off" class="layui-input">
+                    {% elif field.field.widget.input_type == 'number' %}
+                        <input type="number" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}"
+                               required="{{ field.field.required }}" lay-verify="required|number"
+                               placeholder="请输入{{ field.label }}" autocomplete="off" class="layui-input">
+                    {% elif field.field.widget.input_type == 'email' %}
+                        <input type="email" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}"
+                               required="{{ field.field.required }}" lay-verify="required|email"
+                               placeholder="请输入{{ field.label }}" autocomplete="off" class="layui-input">
+                    {% elif field.field.widget.input_type == 'date' %}
+                        <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}"
+                               required="{{ field.field.required }}" lay-verify="required|date"
+                               placeholder="请输入{{ field.label }}" autocomplete="off" class="layui-input">
+                    {% elif field.field.widget.input_type == 'checkbox' %}
+                        <input type="checkbox" name="{{ field.name }}" value="true" title="{{ field.label }}"
+                               {% if field.value %}checked{% endif %}>
+                    {% elif field.field.widget.input_type == 'select' %}
+                        <select name="{{ field.name }}" lay-verify="required">
+                            {% for value, label in field.field.choices %}
+                                <option value="{{ value }}"
+                                        {% if value == field.value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <!--多行文本框 -->
+                    {% elif field.field.widget.input_type == 'textarea' %}
+                        <textarea name="{{ field.name }}" required="{{ field.field.required }}"
+                                  placeholder="请输入{{ field.label }}"
+                                  class="layui-textarea">{{ field.value|default_if_none:'' }}</textarea>
+                        <!--上传文件 -->
+                    {% elif field.field.widget.input_type == 'file' %}
+                        <input type="file" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}"
+                               required="{{ field.field.required }}" lay-verify="required"
+                               placeholder="请上传{{ field.label }}" autocomplete="off" class="layui-input">
+                        <!--单选框 -->
+                    {% elif field.field.widget.input_type == 'radio' %}
+                        {% for value, label in field.field.choices %}
+                            <input type="radio" name="{{ field.name }}" value="{{ value }}" title="{{ label }}"
+                                   {% if value == field.value %}checked{% endif %}>
+                        {% endfor %}
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="layui-form-mid layui-word-aux">{{ field.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+
+</form>
+
+<script src="{% static 'layui/layui.js' %}"></script>
+<script>
+// 注意：导航 依赖 element 模块，否则无法进行功能性操作
+layui.use(['form', 'element'], function(){
+  var form = layui.form
+  ,element = layui.element;
+
+  // 一些事件监听
+  form.on('radio(sex)', function(data){
+    console.log(data.value); // 得到被点击的单选框的值
+  });
+});
+</script>
+
 </body>
 </html>
