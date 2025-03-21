@@ -84,25 +84,18 @@ class RemarkForm(forms.Form):
 
 
 class StudentForm(forms.ModelForm):
-    name = forms.CharField(label="用户名：", required=True, error_messages={'required': "请输入姓名"})
-    sex = forms.ChoiceField(label="性别：", choices=Student.GENDER_CHOICES, widget=forms.RadioSelect)
-    age = forms.IntegerField(label="年龄：", required=True, error_messages={'required': "请输入年龄"},
+    name = forms.CharField(label="用户名", required=True, error_messages={'required': "请输入姓名"})
+    sex = forms.ChoiceField(label="性别", choices=Student.GENDER_CHOICES, widget=forms.RadioSelect)
+    age = forms.IntegerField(label="年龄", required=True, error_messages={'required': "请输入年龄"},
                              widget=forms.NumberInput(attrs={'min': 1, 'max': 100}))
-    address = forms.CharField(label="地址：", required=False, error_messages={'required': "请输入地址"},
+    address = forms.CharField(label="地址", required=False, error_messages={'required': "请输入地址"},
                               widget=forms.TextInput(attrs={'placeholder': '请输入地址'}))
-    enter_date = forms.DateField(label="入学日期：", required=False, error_messages={'required': "请输入入学日期"},
+    enter_date = forms.DateField(label="入学日期", required=False, error_messages={'required': "请输入入学日期"},
                                  widget=forms.DateInput(attrs={'type': 'date'}), input_formats=['%Y-%m-%d'])
-    # 班级 多选
-    class_choice = (
-        ("1", "1班"),
-        ("2", "2班"),
-        ("3", "3班"),
-        ("4", "4班"),
-        ("5", "5班"),
-        ("6", "6班"),
-    )
-    class_list = forms.MultipleChoiceField(label="班级：", choices=class_choice, widget=forms.CheckboxSelectMultiple)
+    # 关联班级
+    sclass = forms.ModelChoiceField(label="班级", queryset=Class.objects.all(), required=True,help_text="请选择班级11",
+                                    error_messages={'required': "请选择班级"}, empty_label="请选择班级")
 
     class Meta:
         model = Student
-        fields = ['name', 'sex', 'age', 'address', 'enter_date']
+        fields = ['name', 'sex', 'age', 'address', 'enter_date', 'sclass']

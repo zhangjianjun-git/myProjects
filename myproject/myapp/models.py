@@ -104,8 +104,9 @@ class Student(models.Model):
     address = models.CharField(verbose_name='家庭住址', max_length=250, blank=True)
     enter_date = models.DateField(null=True, blank=True, verbose_name='入学时间')
     remarks = RichTextField(verbose_name='备注', blank=True)
-    # 关联班级
-    sclass = models.ForeignKey("Class", on_delete=models.CASCADE, blank=True, null=True, verbose_name='班级')
+    # 关联班级,空选项显示请选择
+    sclass = models.ForeignKey("Class", on_delete=models.CASCADE, blank=True, null=True, verbose_name='班级',
+                               default='请选择')
 
     # 定义元类,指定数据表名称
     class Meta:
@@ -126,6 +127,11 @@ class Student(models.Model):
             'sex': student.sex,
             'enter_date': student.enter_date
         }
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "sclass":
+            kwargs["empty_label"] = "请选择"
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     # 定义一个返回的名称,默认返回self
     def __str__(self):
