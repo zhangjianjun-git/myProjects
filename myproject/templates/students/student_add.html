@@ -6,8 +6,7 @@
     <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
 </head>
 <body>
-<form id="addStudentForm" class="layui-form" action="">
-
+<form id="addStudentForm" class="layui-form" action="" enctype="multipart/form-data">
     {% csrf_token %}
     {% for field in form %}
         <div class="layui-form-item">
@@ -39,6 +38,11 @@
                                     {% if value == field.value %}selected{% endif %}>{{ label }}</option>
                         {% endfor %}
                     </select>
+                    <!--上传图片 -->
+                {% elif field.field.widget.input_type == 'image' %}
+                    <input type="file" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}"
+                           required="{{ field.field.required }}" lay-verify="required"
+                           placeholder="请上传{{ field.label }}" autocomplete="off" accept="image/*" class="layui-input">
                     <!--多行文本框 -->
                 {% elif field.field.widget.input_type == 'textarea' %}
                     <textarea name="{{ field.name }}" required="{{ field.field.required }}"
@@ -80,12 +84,14 @@
 
     function callbackdata() {
         // 这里假设你有一个表单，表单的 ID 为 myForm
-        let formData = $('#addStudentForm').serializeArray();
-        let data = {};
-        formData.forEach(item => {
-            data[item.name] = item.value;
-        });
-        return JSON.stringify(data);
+        //let formData = $('#addStudentForm').serializeArray();
+        //let data = {};
+       // formData.forEach(item => {
+        //    data[item.name] = item.value;
+       // });
+        let form = document.getElementById('addStudentForm');
+        let formData = new FormData(form);
+        return formData;
     }
 </script>
 

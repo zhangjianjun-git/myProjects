@@ -99,8 +99,8 @@ class Student(models.Model):
     )
 
     sex = models.CharField(verbose_name='性别', max_length=10, choices=GENDER_CHOICES)  # 添加 choices 参数
-    age = models.IntegerField(verbose_name='年龄', validators=[MinValueValidator(6), MaxValueValidator(20)])
-    image = models.ImageField(upload_to='images/', verbose_name='照片', blank=True)
+    age = models.IntegerField(verbose_name='年龄', validators=[MinValueValidator(1), MaxValueValidator(100)])
+    image = models.ImageField(upload_to='images/', verbose_name='照片', blank=True, null=True)
     address = models.CharField(verbose_name='家庭住址', max_length=250, blank=True)
     enter_date = models.DateField(null=True, blank=True, verbose_name='入学时间')
     remarks = RichTextField(verbose_name='备注', blank=True)
@@ -125,13 +125,11 @@ class Student(models.Model):
             'name': student.name,
             'age': student.age,
             'sex': student.sex,
+            'image': student.image.url if student.image else None,
+            'address': student.address,  # 注意这里的address是字符串类型，需要用单引号包裹
+            'class': student.sclass.name if student.sclass else None,
             'enter_date': student.enter_date
         }
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "sclass":
-            kwargs["empty_label"] = "请选择"
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     # 定义一个返回的名称,默认返回self
     def __str__(self):

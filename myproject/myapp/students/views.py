@@ -40,7 +40,7 @@ def get_students_page(request):
 
     data_count = students.count()
     page_num = request.GET.get('pageNum', 1)  # 获取页码，默认为1
-    page_size = request.GET.get('pageSize', 2)  # 获取每页显示的条数，默认为10
+    page_size = request.GET.get('pageSize', 5)  # 获取每页显示的条数，默认为5
     print("当前索引:{} 当前大小:{}".format(page_num, page_size))
     print("所有记录:{} 数据总条数:{}".format(students, data_count))
 
@@ -104,11 +104,18 @@ def student_add(request):
 
 # 定义一个函数，添加学生信息
 def student_create(request):
-    if request.method == 'POST':
-        form = StudentForm(request.POST)
+    if request.method == 'POST' \
+            and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        form = StudentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('student_list')  # 假设有一个学生列表页
+            return JsonResponse({"code": 0, "msg": "添加成功！"})
+        else:
+            errors = {}
+            for field, error_list in form.errors.items():
+                errors[field] = [error for error in error_list]  # 将每个错误转换为字符串列表
+            errors = json.dumps(errors, ensure_ascii=False)  # 将错误信息转换为JSON字符串
+            return JsonResponse({"code": 1, "msg": errors}, safe=False)
     else:
         form = StudentForm()
     return render(request, 'students/student_add.html', {'form': form})
@@ -117,7 +124,7 @@ def student_create(request):
 # 定义一个函数，根据学生id修改学生信息
 def student_update(request, pk):
     student_obj = Student.objects.get(id=pk)
-    if request.method == "POST":
+    if request.method == 'POST' and request.is_ajax():
         name = request.POST.get("name")
         age = request.POST.get("age")
         gender = request.POST.get("gender")

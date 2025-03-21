@@ -149,8 +149,8 @@
                 first: false, // 不显示首页
                 last: false   // 不显示尾页
             },
-            limit: 2, //设置每页显示的数据条数
-            limits: [2, 5, 10, 15, 20, 25, 50], //设置分页每页条数的选择项
+            limit: 5, //设置每页显示的数据条数
+            limits: [5, 10, 15, 20, 25, 50], //设置分页每页条数的选择项
             unresize: false  //是否禁用拖动列宽调整功能
         });
 
@@ -163,11 +163,11 @@
                 case 'add_link':     // lay-event自定义的新增按钮toolbar事件
                     parent.layer.open({
                         type: 2,
-                        title: "新增地址链接操作",
+                        title: "新增学生",
                         area: ['600px', '450px'],
                         fix: false,
                         maxmin: true,
-                        shadeClose: true,
+                        shadeClose: false,// true表示点击遮罩关闭弹窗，false表示模式窗口
                         shade: 0.4,
                         {#skin: 'layui-layer-normal',#}
                         skin: 'layui-layer-rim',
@@ -177,57 +177,67 @@
                             //检验表单必填字段
                             let iframe = $(layero).find("iframe")[0];
                             if (iframe.contentWindow.callbackdata) {
-                                let json_data = iframe.contentWindow.callbackdata();
-                                debugger;
+                                let form_data = iframe.contentWindow.callbackdata();
                                 //检验表单必填字段
-                                let form_data = JSON.parse(json_data);
-                                if (!form_data.name) {
+                                if (!form_data.has('name') || form_data.get('name') === '') {
                                     parent.layer.msg('姓名不能为空', {icon: 5});
                                     iframe.contentWindow.document.querySelector('input[name="name"]').focus();
                                     return false;
                                 }
-                                if (!form_data.age) {
+                                if (!form_data.has('age') || form_data.get('age') === '') {
                                     parent.layer.msg('年龄不能为空', {icon: 5});
                                     // 鼠标定位到输入框
                                     iframe.contentWindow.document.querySelector('input[name="age"]').focus();
                                     return false;
                                 }
-                                if (!form_data.sex) {
+                                if (!form_data.has('sex') || form_data.get('sex') === '') {
                                     parent.layer.msg('性别不能为空', {icon: 5}, function () {
                                         iframe.contentWindow.document.querySelector('input[name="sex"]').focus();
                                     });
                                     return false;
                                 }
-                                if (!form_data.address) {
-                                    parent.layer.msg('家庭住址不能为空', {icon: 5},function () {
-                                          iframe.contentWindow.document.querySelector('input[name="address"]').focus();
+                                if (!form_data.has('address') || form_data.get('address') === '') {
+                                    parent.layer.msg('家庭住址不能为空', {icon: 5}, function () {
+                                        iframe.contentWindow.document.querySelector('input[name="address"]').focus();
                                     });
                                     return false;
                                 }
-                                if (!form_data.enter_date) {
-                                    parent.layer.msg('入学时间不能为空', {icon: 5},function () {
-                                          iframe.contentWindow.document.querySelector('input[name="enter_date"]').focus();
+                                if (!form_data.has('enter_date') || form_data.get('enter_date') === '') {
+                                    parent.layer.msg('入学时间不能为空', {icon: 5}, function () {
+                                        iframe.contentWindow.document.querySelector('input[name="enter_date"]').focus();
                                     });
                                     return false;
                                 }
                             }
 
                             // 从iframe中拿到data，获取post数据
-                            let json_data = $(layero).find("iframe")[0].contentWindow.callbackdata();
-                            alert(json_data);
+                            let formData = $(layero).find("iframe")[0].contentWindow.callbackdata();
+                            const url = '{% url "student_create" %}';  // 动态获取URL
                             $.ajax({
-                                url: "/myapp/students/student_create",  // 新增链接窗口中的数据处理
+                                url: url,  // 新增链接窗口中的数据处理
                                 type: "post",
-                                datatype: "json",
-                                data: json_data,
-                                async: false,
-                                cache: true,
-                                success: function () {
+                                // datatype: "json",
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                headers: {
+                                    "X-CSRFToken": '{{ csrf_token }}'
+                                },
+                                success: function (result) {
                                     // 刷新太快了，新增接口，network中没有返回数据
-                                    window.location.reload();
+                                    //window.location.reload();
+                                        debugger;
+                                    //返回编码不等于1时，提示错误信息
+                                    if (result.code == 0) {
+                                        parent.layer.msg(result.msg, {icon: 6});
+                                        parent.layer.close(index);
+                                        window.location.reload();
+                                    } else {
+                                        parent.layer.msg(result.msg, {icon: 5});
+                                    }
                                 }
                             });
-                            parent.layer.close(index);
+
                         }
                     });
                     break;

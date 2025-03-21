@@ -88,14 +88,16 @@ class StudentForm(forms.ModelForm):
     sex = forms.ChoiceField(label="性别", choices=Student.GENDER_CHOICES, widget=forms.RadioSelect)
     age = forms.IntegerField(label="年龄", required=True, error_messages={'required': "请输入年龄"},
                              widget=forms.NumberInput(attrs={'min': 1, 'max': 100}))
+    image = forms.ImageField(label="照片", required=False, error_messages={'required': "请上传照片"},
+                             widget=forms.FileInput(attrs={'accept': 'image/*'}))
     address = forms.CharField(label="地址", required=False, error_messages={'required': "请输入地址"},
                               widget=forms.TextInput(attrs={'placeholder': '请输入地址'}))
     enter_date = forms.DateField(label="入学日期", required=False, error_messages={'required': "请输入入学日期"},
                                  widget=forms.DateInput(attrs={'type': 'date'}), input_formats=['%Y-%m-%d'])
     # 关联班级
-    sclass = forms.ModelChoiceField(label="班级", queryset=Class.objects.all(), required=True,help_text="请选择班级11",
+    sclass = forms.ModelChoiceField(label="班级", queryset=Class.objects.all(), required=True, help_text="请选择班级11",
                                     error_messages={'required': "请选择班级"}, empty_label="请选择班级")
 
     class Meta:
         model = Student
-        fields = ['name', 'sex', 'age', 'address', 'enter_date', 'sclass']
+        fields = ['name', 'sex', 'age', 'image', 'address', 'enter_date', 'sclass']
