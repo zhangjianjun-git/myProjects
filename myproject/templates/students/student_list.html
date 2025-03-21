@@ -23,6 +23,7 @@
 </head>
 <body>
 <div class="demoTable">
+    {% csrf_token %}
     <form class="layui-form" action="{% url 'student_list' %}" method="get" id="searchForm">
         <div class="layui-form-item">
             <div class="layui-inline">
@@ -129,7 +130,8 @@
                 dataName: 'data'        // 规定数据列表的字段名称，默认：data
             }
             , cols: [[
-                {type: 'checkbox', fixed: 'left'},
+                //{type: 'checkbox', fixed: 'left'},
+                {checkbox: true},//开启多选框
                 {
                     field: 'id', title: 'ID序号', width: 100, sort: true, templet: function (data) {
                         return data.id
@@ -159,6 +161,7 @@
             var checkStatus = table.checkStatus(obj.config.id),
                 data = checkStatus.data;
             data = JSON.parse(JSON.stringify(data));
+            const add_url = '{% url "student_add" %}';  // 动态获取URL
             switch (obj.event) {
                 case 'add_link':     // lay-event自定义的新增按钮toolbar事件
                     parent.layer.open({
@@ -171,7 +174,7 @@
                         shade: 0.4,
                         {#skin: 'layui-layer-normal',#}
                         skin: 'layui-layer-rim',
-                        content: ["/myapp/students/student_add", "no"],     // 新增链接，窗口页面
+                        content: [add_url, "no"],     // 新增链接，窗口页面
                         btn: ['提交', '取消'],
                         yes: function (index, layero) {
                             //检验表单必填字段
@@ -226,12 +229,12 @@
                                 success: function (result) {
                                     // 刷新太快了，新增接口，network中没有返回数据
                                     //window.location.reload();
-                                        debugger;
+                                    debugger;
                                     //返回编码不等于1时，提示错误信息
                                     if (result.code == 0) {
                                         parent.layer.msg(result.msg, {icon: 6});
                                         parent.layer.close(index);
-                                        window.location.reload();
+                                        reloadStudentTable(null, null, null, null, null);
                                     } else {
                                         parent.layer.msg(result.msg, {icon: 5});
                                     }
@@ -246,32 +249,37 @@
                     let vals = new Array();
                     $("td .layui-form-checked").parents("tr").children('[data-field=id]').each(function () {
                         vals.push($(this).text());
-                        console.log(vals);
                     });
+
                     if (vals.length == 0) {  // 未勾选时，提示
-                        layer.open({
+                        parent.layer.open({
                             title: "提示"
                             , content: "请选择需要删除的数据"
                         });
                         return false
                     }
-                    layer.confirm("确定要全部删除吗？", {
+
+                    const batch_delete_url = '{% url "student_batch_delete" %}';
+                    parent.layer.confirm("确定要全部删除吗？", {
                         btn: ["确定", "取消"],
                         yes: function (index) {
-                            let vals = new Array();
-                            $("td .layui-form-checked").parents("tr").children('[data-field=id]').each(function () {
-                                vals.push($(this).attr("data-content"));
-                                console.log(vals);
-                            });
                             $.ajax({
-                                url: "/myapp/students/student_batch_delete"      // 批量删除接口
-                                , type: "post"
-                                , data: JSON.stringify({
-                                    "vals": vals
-                                })
-                                , datatype: "json"
-                                , success: function () {
-                                    parent.location.reload()        // 删除成功后刷新页面
+                                url: batch_delete_url,
+                                type: "post",
+                                data: {
+                                    'ids[]': vals
+                                },
+                                datatype: "json",
+                                headers: {
+                                    "X-CSRFToken": '{{ csrf_token }}'
+                                },
+                                success: function () {
+                                    // 删除成功实现局部表格刷新
+                                    reloadStudentTable(null, null, null, null, null);
+                                    parent.layer.close(index);  // 关闭弹窗
+                                },
+                                error: function (xhr, status, error) {
+                                    parent.layer.msg('请求错误', {icon: 5});
                                 }
                             })
                         },
@@ -321,11 +329,24 @@
                 enter_date_range = formData.enter_date_range;
             ;
 
+            // 调用公共函数来重新加载表格
+            reloadStudentTable(name, age, sex, address, enter_date_range);
+            return false;
+        });
+
+    });
+
+
+    // 定义一个公共函数来封装 table.reload 方法
+    function reloadStudentTable(name, age, sex, address, enter_date_range) {
+        layui.use(['table'], function () {
+            let table = layui.table;
+
             table.reload('studentTableReload', {
                 page: {
                     curr: 1 //重新从第 1 页开始
                 },
-                where: {    // 查询条件
+                where: { // 查询条件
                     name: name,
                     age: age,
                     sex: sex,
@@ -333,13 +354,10 @@
                     enter_date_range: enter_date_range
                 },
                 method: 'get',
-                // contentType: "application/json;charset=utf-8",
                 url: '/myapp/students/get_students_page'
             });
-            return false;
         });
-
-    });
+    }
 
     // 示例操作函数
     function viewStudent(id) {

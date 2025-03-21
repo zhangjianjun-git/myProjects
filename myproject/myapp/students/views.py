@@ -145,12 +145,11 @@ def student_delete(request, pk):
 
 
 # 批量删除学生
-@csrf_exempt
+# @csrf_exempt
 def student_batch_delete(request):
     if request.method == "POST":
-        ids = request.POST.get("ids")
-        ids_list = json.loads(ids)
-        Student.objects.filter(id__in=ids_list).delete()
+        ids = request.POST.getlist('ids[]')
+        Student.objects.filter(id__in=ids).delete()
         return JsonResponse({"code": 0, "msg": "批量删除成功！"})
     else:
         return JsonResponse({"code": 1, "msg": "请求方式错误！"})
