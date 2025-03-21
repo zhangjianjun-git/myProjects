@@ -1,11 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>学生列表</title>
+{% extends 'basePage.html' %}
+{% block title %}
+    学生列表
+{% endblock %}
+
+{% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
-    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
-    <link rel="shortcut icon" href="{% static "images/favicon.ico" %}"/>
+{% endblock %}
+
+{% block extra_style %}
     <style>
         .layui-form-label {
             white-space: nowrap; /* 防止文字换行 */
@@ -20,372 +22,452 @@
         }
 
     </style>
-</head>
-<body>
-<div class="demoTable">
-    {% csrf_token %}
-    <form class="layui-form" action="{% url 'student_list' %}" method="get" id="searchForm">
-        <div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">姓名</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="name" value="{{ request.GET.name }}" autocomplete="off"
-                           class="layui-input">
-                </div>
-            </div>
+{% endblock %}
 
-            <div class="layui-inline">
-                <label class="layui-form-label">年龄</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="age" value="{{ request.GET.age }}" autocomplete="off" class="layui-input">
+{% block content %}
+    <div class="demoTable">
+        {% csrf_token %}
+        <form class="layui-form" action="{% url 'student_list' %}" method="get" id="searchForm">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" value="{{ request.GET.name }}" autocomplete="off"
+                               class="layui-input">
+                    </div>
                 </div>
-            </div>
-            <div class="layui-inline">
-                <label class="layui-form-label">性别</label>
-                <div class="layui-input-inline">
-                    <select name="sex" lay-filter="sex" class="layui-input">
-                        <option value="">请选择</option> <!-- 默认空选项 -->
-                        <option value="male" {% if request.GET.sex == 'male' %}selected{% endif %}>男</option>
-                        <option value="female" {% if request.GET.sex == 'female' %}selected{% endif %}>女</option>
-                    </select>
-                </div>
-            </div>
 
-            <div class="layui-inline">
-                <label class="layui-form-label">入学时间</label>
-                <div class="layui-input-inline" style="width: 300px;">
-                    <input type="text" class="layui-input" id="enter_date_range" placeholder=" - "
-                           name="enter_date_range">
+                <div class="layui-inline">
+                    <label class="layui-form-label">年龄</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="age" value="{{ request.GET.age }}" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-inline">
+                        <select name="sex" lay-filter="sex" class="layui-input">
+                            <option value="">请选择</option> <!-- 默认空选项 -->
+                            <option value="male" {% if request.GET.sex == 'male' %}selected{% endif %}>男</option>
+                            <option value="female" {% if request.GET.sex == 'female' %}selected{% endif %}>女</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">入学时间</label>
+                    <div class="layui-input-inline" style="width: 300px;">
+                        <input type="text" class="layui-input" id="enter_date_range" placeholder=" - "
+                               name="enter_date_range">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <div class="layui-input-block">
+                        <!--  <button class="layui-btn" lay-filter="linkSearch" id="search" data-type="reload">查询</button> -->
+                        <button id="search" class="layui-btn layui-btn-normal" lay-submit
+                                lay-filter="linkSearch">
+                            <i class="layui-icon">查询&#xe615;</i>
+                        </button>
+                        <button class="layui-btn layui-btn-primary" type="reset" onclick="resetForm()">重置</button>
+                    </div>
                 </div>
             </div>
+        </form>
 
-            <div class="layui-inline">
-                <div class="layui-input-block">
-                    <!--  <button class="layui-btn" lay-filter="linkSearch" id="search" data-type="reload">查询</button> -->
-                    <button id="search" class="layui-btn layui-btn-normal" lay-submit
-                            lay-filter="linkSearch">
-                        <i class="layui-icon">查询&#xe615;</i>
-                    </button>
-                    <button class="layui-btn layui-btn-primary" type="reset" onclick="resetForm()">重置</button>
-                </div>
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">新增</button>
+                <button class="layui-btn layui-btn-sm" lay-event="deleteCheckData" style="background-color: #ef4136">
+                    批量删除
+                </button>
             </div>
-        </div>
-    </form>
+        </script>
 
-    <script type="text/html" id="toolbarDemo">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">新增</button>
-            <button class="layui-btn layui-btn-sm" lay-event="deleteCheckData" style="background-color: #ef4136">
-                批量删除
-            </button>
-        </div>
+        <script type="text/html" id="add_event">
+            {#    功能按钮，通过lay-event绑定 eg：lay-event="add_link"#}
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add_link"><i
+                        class="layui-icon">添加</i>
+                </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete_link">批量删除</button>
+            </div>
+        </script>
+
+        <table id="demo" lay-filter="linkList"></table>
+    </div>
+
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
+{% endblock %}
 
-    <script type="text/html" id="add_event">
-        {#    功能按钮，通过lay-event绑定 eg：lay-event="add_link"#}
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add_link"><i class="layui-icon">添加</i>
-            </button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete_link">批量删除</button>
-        </div>
-    </script>
-
-    <table id="demo" lay-filter="linkList"></table>
-</div>
-
-<script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
-<script src="{% static 'layui/layui.js' %}"></script>
-<script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
-
-<script>
-    layui.use(['form', 'laypage', 'laydate', 'table'], function () {
-        let form = layui.form, laydate = layui.laydate, table = layui.table;
-        //日期范围选择器
-        laydate.render({
-            elem: '#enter_date_range',
-            range: true,
-            value: "{{ request.GET.enter_date_range }}"
-        });
-
-        table.render({
-            elem: '#demo',
-            url: '/myapp/students/get_students_page',
-            method: 'get',
-            id: 'studentTableReload',
-            toolbar: '#add_event',  // 开启头部工具栏，并为其绑定左侧模板
-            page: true, //开启分页功能
-            //  even: true, //设置隔行背景
-            request: {
-                pageName: 'pageNum',  // 页码的参数名称，默认：page
-                limitName: 'pageSize'   // 每页数据量的参数名，默认：limit
-            }
-            , response: {
-                statusName: 'code',     // 规定数据状态的字段名称，默认：code
-                statusCode: 0,          // 规定成功的状态码，默认：0
-                msgName: 'msg',         // 规定状态信息的字段名称，默认：msg
-                countName: 'count', // 规定数据总数的字段名称，默认：count
-                dataName: 'data'        // 规定数据列表的字段名称，默认：data
-            }
-            , cols: [[
-                //{type: 'checkbox', fixed: 'left'},
-                {checkbox: true},//开启多选框
-                {
-                    field: 'id', title: 'ID序号', width: 100, sort: true, templet: function (data) {
-                        return data.id
-                    }
+{% block extra_scripts %}
+    <script>
+        layui.use(['form', 'laypage', 'laydate', 'table'], function () {
+            let form = layui.form, laydate = layui.laydate, table = layui.table;
+            //日期范围选择器
+            laydate.render({
+                elem: '#enter_date_range',
+                range: true,
+                value: "{{ request.GET.enter_date_range }}"
+            });
+            const list_url = '{% url "student_list" %}';
+            table.render({
+                elem: '#demo',
+                url: list_url,
+                method: 'get',
+                id: 'studentTableReload',
+                toolbar: '#add_event',  // 开启头部工具栏，并为其绑定左侧模板
+                page: true, //开启分页功能
+                //  even: true, //设置隔行背景
+                request: {
+                    pageName: 'pageNum',  // 页码的参数名称，默认：page
+                    limitName: 'pageSize'   // 每页数据量的参数名，默认：limit
+                }
+                , response: {
+                    statusName: 'code',     // 规定数据状态的字段名称，默认：code
+                    statusCode: 0,          // 规定成功的状态码，默认：0
+                    msgName: 'msg',         // 规定状态信息的字段名称，默认：msg
+                    countName: 'count', // 规定数据总数的字段名称，默认：count
+                    dataName: 'data'        // 规定数据列表的字段名称，默认：data
+                }
+                , cols: [[
+                    //{type: 'checkbox', fixed: 'left'},
+                    {checkbox: true},//开启多选框
+                    {
+                        field: 'id', title: 'ID序号', width: 100, sort: true, templet: function (data) {
+                            return data.id
+                        }
+                    },
+                    {field: 'name', title: '姓名', width: 120, sort: true},
+                    {field: 'sex', title: '性别', width: 120, sort: true},
+                    {field: 'age', title: '年龄', width: 120, sort: true},
+                    {field: 'address', title: '家庭住址', width: 230, sort: true},
+                    {field: 'enter_date', title: '入学时间', width: 110, sort: true},
+                    {field: 'operate', title: '操作', width: 200, align: 'center', toolbar: '#barDemo'}
+                ]]
+                , page: {
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'],     // 自定义分页布局
+                    curr: 1,      // 设置默认起始页1
+                    groups: 10,   //只显示10个连续页码,就是说显示10个可见页其他的省略
+                    first: false, // 不显示首页
+                    last: false   // 不显示尾页
                 },
-                {field: 'name', title: '姓名', width: 120},
-                {field: 'sex', title: '性别', width: 120},
-                {field: 'age', title: '年龄', width: 120},
-                {field: 'address', title: '家庭住址', width: 230},
-                {field: 'enter_date', title: '入学时间', width: 110},
-                {field: 'operate', title: '操作', width: 200, align: 'center', toolbar: '#barDemo'}
-            ]]
-            , page: {
-                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'],     // 自定义分页布局
-                curr: 1,      // 设置默认起始页1
-                groups: 10,   //只显示10个连续页码,就是说显示10个可见页其他的省略
-                first: false, // 不显示首页
-                last: false   // 不显示尾页
-            },
-            limit: 5, //设置每页显示的数据条数
-            limits: [5, 10, 15, 20, 25, 50], //设置分页每页条数的选择项
-            unresize: false  //是否禁用拖动列宽调整功能
-        });
+                limit: 5, //设置每页显示的数据条数
+                limits: [5, 10, 15, 20, 25, 50], //设置分页每页条数的选择项
+                unresize: false  //是否禁用拖动列宽调整功能
+            });
 
-        //添加和批量删除按钮事件
-        table.on('toolbar(linkList)', function (obj) {
-            var checkStatus = table.checkStatus(obj.config.id),
-                data = checkStatus.data;
-            data = JSON.parse(JSON.stringify(data));
-            const add_url = '{% url "student_add" %}';  // 动态获取URL
-            switch (obj.event) {
-                case 'add_link':     // lay-event自定义的新增按钮toolbar事件
-                    parent.layer.open({
-                        type: 2,
-                        title: "新增学生",
-                        area: ['600px', '450px'],
-                        fix: false,
-                        maxmin: true,
-                        shadeClose: false,// true表示点击遮罩关闭弹窗，false表示模式窗口
-                        shade: 0.4,
-                        {#skin: 'layui-layer-normal',#}
-                        skin: 'layui-layer-rim',
-                        content: [add_url, "no"],     // 新增链接，窗口页面
-                        btn: ['提交', '取消'],
-                        yes: function (index, layero) {
-                            //检验表单必填字段
-                            let iframe = $(layero).find("iframe")[0];
-                            if (iframe.contentWindow.callbackdata) {
-                                let form_data = iframe.contentWindow.callbackdata();
+            //添加和批量删除按钮事件
+            table.on('toolbar(linkList)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id),
+                    data = checkStatus.data;
+                data = JSON.parse(JSON.stringify(data));
+                const add_url = '{% url "student_add" %}';  // 动态获取URL
+                switch (obj.event) {
+                    case 'add_link':     // lay-event自定义的新增按钮toolbar事件
+                        parent.layer.open({
+                            type: 2,
+                            title: "新增学生",
+                            area: ['600px', '450px'],
+                            fix: false,
+                            maxmin: true,
+                            shadeClose: false,// true表示点击遮罩关闭弹窗，false表示模式窗口
+                            shade: 0.4,
+                            {#skin: 'layui-layer-normal',#}
+                            skin: 'layui-layer-rim',
+                            content: [add_url, "no"],     // 新增链接，窗口页面
+                            btn: ['提交', '取消'],
+                            yes: function (index, layero) {
                                 //检验表单必填字段
-                                if (!form_data.has('name') || form_data.get('name') === '') {
-                                    parent.layer.msg('姓名不能为空', {icon: 5});
-                                    iframe.contentWindow.document.querySelector('input[name="name"]').focus();
-                                    return false;
+                                let iframe = $(layero).find("iframe")[0];
+                                if (iframe.contentWindow.callbackdata) {
+                                    let form_data = iframe.contentWindow.callbackdata();
+                                    //检验表单必填字段
+                                    if (!form_data.has('name') || form_data.get('name') === '') {
+                                        parent.layer.msg('姓名不能为空', {icon: 5});
+                                        iframe.contentWindow.document.querySelector('input[name="name"]').focus();
+                                        return false;
+                                    }
+                                    if (!form_data.has('age') || form_data.get('age') === '') {
+                                        parent.layer.msg('年龄不能为空', {icon: 5});
+                                        // 鼠标定位到输入框
+                                        iframe.contentWindow.document.querySelector('input[name="age"]').focus();
+                                        return false;
+                                    }
+                                    if (!form_data.has('sex') || form_data.get('sex') === '') {
+                                        parent.layer.msg('性别不能为空', {icon: 5}, function () {
+                                            iframe.contentWindow.document.querySelector('input[name="sex"]').focus();
+                                        });
+                                        return false;
+                                    }
+                                    if (!form_data.has('address') || form_data.get('address') === '') {
+                                        parent.layer.msg('家庭住址不能为空', {icon: 5}, function () {
+                                            iframe.contentWindow.document.querySelector('input[name="address"]').focus();
+                                        });
+                                        return false;
+                                    }
+                                    if (!form_data.has('enter_date') || form_data.get('enter_date') === '') {
+                                        parent.layer.msg('入学时间不能为空', {icon: 5}, function () {
+                                            iframe.contentWindow.document.querySelector('input[name="enter_date"]').focus();
+                                        });
+                                        return false;
+                                    }
                                 }
-                                if (!form_data.has('age') || form_data.get('age') === '') {
-                                    parent.layer.msg('年龄不能为空', {icon: 5});
-                                    // 鼠标定位到输入框
-                                    iframe.contentWindow.document.querySelector('input[name="age"]').focus();
-                                    return false;
+
+                                // 从iframe中拿到data，获取post数据
+                                let formData = $(layero).find("iframe")[0].contentWindow.callbackdata();
+                                const url = '{% url "student_create" %}';  // 动态获取URL
+                                $.ajax({
+                                    url: url,  // 新增链接窗口中的数据处理
+                                    type: "post",
+                                    // datatype: "json",
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    headers: {
+                                        "X-CSRFToken": '{{ csrf_token }}'
+                                    },
+                                    success: function (result) {
+                                        // 刷新太快了，新增接口，network中没有返回数据
+                                        //window.location.reload();
+                                        debugger;
+                                        //返回编码不等于1时，提示错误信息
+                                        if (result.code == 0) {
+                                            parent.layer.msg(result.msg, {icon: 6});
+                                            parent.layer.close(index);
+                                            reloadStudentTable(null, null, null, null, null);
+                                        } else {
+                                            parent.layer.msg(result.msg, {icon: 5});
+                                        }
+                                    }
+                                });
+
+                            }
+                        });
+                        break;
+                    case 'delete_link':
+                        // 获取勾选了的CheckBox对应的id->vals里面
+                        let vals = new Array();
+                        $("td .layui-form-checked").parents("tr").children('[data-field=id]').each(function () {
+                            vals.push($(this).text());
+                        });
+
+                        if (vals.length == 0) {  // 未勾选时，提示
+                            parent.layer.open({
+                                title: "提示"
+                                , content: "请选择需要删除的数据"
+                            });
+                            return false
+                        }
+
+                        const batch_delete_url = '{% url "student_batch_delete" %}';
+                        parent.layer.confirm("确定要全部删除吗？", {
+                            btn: ["确定", "取消"],
+                            yes: function (index) {
+                                $.ajax({
+                                    url: batch_delete_url,
+                                    type: "post",
+                                    data: {
+                                        'ids[]': vals
+                                    },
+                                    datatype: "json",
+                                    headers: {
+                                        "X-CSRFToken": '{{ csrf_token }}'
+                                    },
+                                    success: function () {
+                                        // 删除成功实现局部表格刷新
+                                        reloadStudentTable(null, null, null, null, null);
+                                        parent.layer.close(index);  // 关闭弹窗
+                                    },
+                                    error: function (xhr, status, error) {
+                                        parent.layer.msg('请求错误', {icon: 5});
+                                    }
+                                })
+                            },
+                        });
+                }
+                ;
+            });
+
+            // 监听行工具事件：也就是编辑与删除的处理事件
+            table.on('tool(linkList)', function (obj) {
+                // 获取tool行数据，这里用来提供数据
+                var data = obj.data;
+                var json = JSON.stringify(data);
+                switch (obj.event) {
+                    case 'detail':
+                        console.log("链接详情");
+                        var oldValues = [];     // 存储当前行数据
+                        $.each(data, function (key, value) {
+                            if (key != 'id') {
+                                oldValues.push(value);
+                            }
+                        });
+
+                        var index = layer.open({
+                            type: 2,
+                            title: "链接详情页面",
+                            area: ['450px', '800px'],
+                            fix: false,
+                            maxmin: true,
+                            shadeClose: true,
+                            {#value: {"env": json.env},#}
+                            shade: 0.4,
+                            skin: 'layui-layer-rim',
+                            content: ["", "no"],       // 链接详情页
+                            success: function (layero, index) {
+                                // 将列表页中选中行的数据oldValues，注入到iframe页面中对应的input框里
+                                var body = layer.getChildFrame('body', index);
+                                var iframeWindow = $(layero).find("iframe")[0].contentWindow;  // 获取当前iframe页面
+                                var inputList = body.find("input");
+                                console.log(inputList, "inputlist")
+                                for (var i = 0; i < inputList.length; i++) {
+                                    $(inputList[i]).val(oldValues[i])
                                 }
-                                if (!form_data.has('sex') || form_data.get('sex') === '') {
-                                    parent.layer.msg('性别不能为空', {icon: 5}, function () {
-                                        iframe.contentWindow.document.querySelector('input[name="sex"]').focus();
-                                    });
-                                    return false;
-                                }
-                                if (!form_data.has('address') || form_data.get('address') === '') {
-                                    parent.layer.msg('家庭住址不能为空', {icon: 5}, function () {
-                                        iframe.contentWindow.document.querySelector('input[name="address"]').focus();
-                                    });
-                                    return false;
-                                }
-                                if (!form_data.has('enter_date') || form_data.get('enter_date') === '') {
-                                    parent.layer.msg('入学时间不能为空', {icon: 5}, function () {
-                                        iframe.contentWindow.document.querySelector('input[name="enter_date"]').focus();
-                                    });
-                                    return false;
+                                console.log(inputList)
+                            }
+                        });
+                        break;
+                    case 'edit':
+                        var field = obj.field, data = obj.data;
+                        var oldValues = [];
+                        $.each(data, function (name, value) {    // 获取编辑行的原始数据
+                            oldValues.push(value);
+                        });
+
+                        var index = layer.open({
+                            type: 2,
+                            title: "编辑链接页面",
+                            area: ['450px', '800px'],
+                            fix: false,
+                            maxmin: true,
+                            shadeClose: true,
+                            shade: 0.4,
+                            skin: 'layui-layer-rim',
+                            btn: ["编辑", "取消"],
+                            content: ["", "no"],
+                            yes: function (index, layero) {
+                                // 将data传到编辑页面，然后，编辑页面将对应的id和修改后的数据一同传给后端
+                                let json_data = $(layero).find("iframe")[0].contentWindow.callbackEditData(data);
+                                console.log(5, json_data);
+                                $.ajax({
+                                    url: ""      // 处理编辑数据，这里与查看不一样
+                                    , type: "post"
+                                    , async: false
+                                    , cache: false
+                                    , data: json_data
+                                    , dataType: "json"
+                                    , success: function (data) {
+                                        location.reload()
+                                    }
+                                });
+                                layer.close(index);
+                            },
+                            success: function (layero, index) {
+                                var body = layer.getChildFrame('body', index); // 获取当前iframe页面的body
+                                var iframeWindow = $(layero).find("iframe")[0].contentWindow;  // 获取当前iframe页面
+                                var inputList = body.find('input');
+                                for (var i = 0; i < inputList.length; i++) {
+                                    $(inputList[i]).attr("value", oldValues[i + 1]); //遍历子窗口的input标签，将之前数组中的值一次放入显示
+                                    {#$(inputList[i]).val(oldValues[i + 1]); //遍历子窗口的input标签，将之前数组中的值一次放入显示#}
                                 }
                             }
-
-                            // 从iframe中拿到data，获取post数据
-                            let formData = $(layero).find("iframe")[0].contentWindow.callbackdata();
-                            const url = '{% url "student_create" %}';  // 动态获取URL
+                        });
+                        break;
+                    case 'del':
+                        var delIndex = layer.confirm('真的删除id为' + data.id + "的信息吗?", function (delIndex) {
                             $.ajax({
-                                url: url,  // 新增链接窗口中的数据处理
+                                url: '' + data.id,    // 单个删除，By_id
                                 type: "post",
-                                // datatype: "json",
-                                data: formData,
-                                processData: false,
-                                contentType: false,
-                                headers: {
-                                    "X-CSRFToken": '{{ csrf_token }}'
-                                },
-                                success: function (result) {
-                                    // 刷新太快了，新增接口，network中没有返回数据
-                                    //window.location.reload();
-                                    debugger;
-                                    //返回编码不等于1时，提示错误信息
-                                    if (result.code == 0) {
-                                        parent.layer.msg(result.msg, {icon: 6});
-                                        parent.layer.close(index);
-                                        reloadStudentTable(null, null, null, null, null);
+                                success: function (suc) {
+                                    if (suc.code == 200) {
+                                        {#obj.del(); //删除对应行（tr）的DOM结构，并更新缓存#}
+                                        layer.msg("删除成功", {
+                                            icon: 1
+                                        });
+                                        window.location.reload()
                                     } else {
-                                        parent.layer.msg(result.msg, {icon: 5});
+                                        layer.msg("删除失败", {
+                                            icon: 5
+                                        });
                                     }
                                 }
                             });
-
-                        }
-                    });
-                    break;
-                case 'delete_link':
-                    // 获取勾选了的CheckBox对应的id->vals里面
-                    let vals = new Array();
-                    $("td .layui-form-checked").parents("tr").children('[data-field=id]').each(function () {
-                        vals.push($(this).text());
-                    });
-
-                    if (vals.length == 0) {  // 未勾选时，提示
-                        parent.layer.open({
-                            title: "提示"
-                            , content: "请选择需要删除的数据"
+                            layer.close(delIndex);
                         });
-                        return false
-                    }
-
-                    const batch_delete_url = '{% url "student_batch_delete" %}';
-                    parent.layer.confirm("确定要全部删除吗？", {
-                        btn: ["确定", "取消"],
-                        yes: function (index) {
-                            $.ajax({
-                                url: batch_delete_url,
-                                type: "post",
-                                data: {
-                                    'ids[]': vals
-                                },
-                                datatype: "json",
-                                headers: {
-                                    "X-CSRFToken": '{{ csrf_token }}'
-                                },
-                                success: function () {
-                                    // 删除成功实现局部表格刷新
-                                    reloadStudentTable(null, null, null, null, null);
-                                    parent.layer.close(index);  // 关闭弹窗
-                                },
-                                error: function (xhr, status, error) {
-                                    parent.layer.msg('请求错误', {icon: 5});
-                                }
-                            })
-                        },
-                    });
-            }
-            ;
-        });
-
-        // 监听行工具事件：也就是编辑与删除的处理事件
-        table.on('tool(linkList)', function (obj) {
-            let data = obj.data;
-            if (obj.event === 'del') {
-                layer.confirm('真的要删除本行数据吗 ?', function (index) {
-                    // console.log("待删除ID: " + obj.data['id']);
-                    $.ajax({
-                        url: "/delete_page/",
-                        type: "get",
-                        data: {"id": obj.data['id']},
-                        success: function (recv) {
-                            layer.msg("删除完成了..", {icon: 6});
-                        }
-                    });
-                    obj.del();
-                    layer.close(index);
-                });
-            } else if (obj.event === 'edit') {
-                layer.prompt({
-                    formType: 2
-                    , value: data.email
-                }, function (value, index) {
-                    obj.update({
-                        email: value
-                    });
-                    layer.close(index);
-                });
-            }
-        });
-
-        // 查询按钮点击事件
-        form.on('submit(linkSearch)', function (data) {
-            // 查询， 获取表单数据
-            let formData = data.field;
-            let name = formData.name,
-                age = formData.age,
-                sex = formData.sex,
-                address = formData.address,
-                enter_date_range = formData.enter_date_range;
-            ;
-
-            // 调用公共函数来重新加载表格
-            reloadStudentTable(name, age, sex, address, enter_date_range);
-            return false;
-        });
-
-    });
-
-
-    // 定义一个公共函数来封装 table.reload 方法
-    function reloadStudentTable(name, age, sex, address, enter_date_range) {
-        layui.use(['table'], function () {
-            let table = layui.table;
-
-            table.reload('studentTableReload', {
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                },
-                where: { // 查询条件
-                    name: name,
-                    age: age,
-                    sex: sex,
-                    address: address,
-                    enter_date_range: enter_date_range
-                },
-                method: 'get',
-                url: '/myapp/students/get_students_page'
+                        break;
+                }
             });
+            // 查询按钮点击事件
+            form.on('submit(linkSearch)', function (data) {
+                // 查询， 获取表单数据
+                let formData = data.field;
+                let name = formData.name,
+                    age = formData.age,
+                    sex = formData.sex,
+                    address = formData.address,
+                    enter_date_range = formData.enter_date_range;
+                ;
+
+                // 调用公共函数来重新加载表格
+                reloadStudentTable(name, age, sex, address, enter_date_range);
+                return false;
+            });
+
         });
-    }
 
-    // 示例操作函数
-    function viewStudent(id) {
-        alert("查看学生 ID: " + id);
-        // 这里可以添加查看学生详情的逻辑
-    }
 
-    function editStudent(id) {
-        alert("编辑学生 ID: " + id);
-        // 这里可以添加编辑学生的逻辑，比如跳转到编辑页面
-    }
+        // 定义一个公共函数来封装 table.reload 方法
+        function reloadStudentTable(name, age, sex, address, enter_date_range) {
+            layui.use(['table'], function () {
+                let table = layui.table;
 
-    function deleteStudent(id) {
-        alert("删除学生 ID: " + id);
-        // 这里可以添加删除学生的逻辑，比如发送删除请求
-    }
+                table.reload('studentTableReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    },
+                    where: { // 查询条件
+                        name: name,
+                        age: age,
+                        sex: sex,
+                        address: address,
+                        enter_date_range: enter_date_range
+                    },
+                    method: 'get',
+                    url: '/myapp/students/get_students_page'
+                });
+            });
+        }
 
-    // 重置表单
-    function resetForm() {
-        let form = document.querySelector('.layui-form');
-        form.reset(); // 使用原生的 form.reset() 方法重置表单
-        form.querySelector('select[name="sex"]').selectedIndex = 0; // 重置性别下拉框为默认选项
-        $('.layui-select-title input[placeholder="请选择"]').val('');
-        document.querySelector('select[name="sex"]').value = "";
-        //layui.form.render('select'); // 重新渲染下拉框
-    }
+        // 示例操作函数
+        function viewStudent(id) {
+            alert("查看学生 ID: " + id);
+            // 这里可以添加查看学生详情的逻辑
+        }
 
-</script>
+        function editStudent(id) {
+            alert("编辑学生 ID: " + id);
+            // 这里可以添加编辑学生的逻辑，比如跳转到编辑页面
+        }
 
-</body>
-</html>
+        function deleteStudent(id) {
+            alert("删除学生 ID: " + id);
+            // 这里可以添加删除学生的逻辑，比如发送删除请求
+        }
+
+        // 重置表单
+        function resetForm() {
+            let form = document.querySelector('.layui-form');
+            form.reset(); // 使用原生的 form.reset() 方法重置表单
+            form.querySelector('select[name="sex"]').selectedIndex = 0; // 重置性别下拉框为默认选项
+            $('.layui-select-title input[placeholder="请选择"]').val('');
+            document.querySelector('select[name="sex"]').value = "";
+            //layui.form.render('select'); // 重新渲染下拉框
+        }
+
+    </script>
+{% endblock %}
