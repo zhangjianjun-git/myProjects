@@ -345,43 +345,43 @@
                         $.each(data, function (name, value) {    // 获取编辑行的原始数据
                             oldValues.push(value);
                         });
-
+                        let id = data.id;
+                        const edit_url = '{% url "student_edit" pk=0 %}'.replace('0', id);
                         var index = parent.layer.open({
                             type: 2,
-                            title: "编辑链接页面",
-                            area: ['600px', '450px'],
+                            title: "修改学生信息",
+                            area: ['600px', '550px'],
                             fix: false,
                             maxmin: true,
                             shadeClose: true,
                             shade: 0.4,
                             skin: 'layui-layer-rim',
                             btn: ["编辑", "取消"],
-                            content: ["", "no"],
+                            content: [edit_url, "no"],
                             yes: function (index, layero) {
                                 // 将data传到编辑页面，然后，编辑页面将对应的id和修改后的数据一同传给后端
-                                let json_data = $(layero).find("iframe")[0].contentWindow.callbackEditData(data);
-                                console.log(5, json_data);
+                                let formData = $(layero).find("iframe")[0].contentWindow.callbackdata();
                                 $.ajax({
-                                    url: ""      // 处理编辑数据，这里与查看不一样
-                                    , type: "post"
-                                    , async: false
-                                    , cache: false
-                                    , data: json_data
-                                    , dataType: "json"
-                                    , success: function (data) {
-                                        location.reload()
+                                    url: edit_url,
+                                    type: "post",
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    headers: {
+                                        "X-CSRFToken": '{{ csrf_token }}'
+                                    },
+                                    success: function (result) {
+                                        if (result.code == 0) {
+                                            parent.layer.msg(result.msg, {icon: 6});
+                                            parent.layer.close(index);
+                                            reloadStudentTable(null, null, null, null, null);
+                                        } else {
+                                            parent.layer.msg(result.msg, {icon: 5});
+                                        }
                                     }
-                                });
-                                layer.close(index);
-                            },
-                            success: function (layero, index) {
-                                var body = layer.getChildFrame('body', index); // 获取当前iframe页面的body
-                                var iframeWindow = $(layero).find("iframe")[0].contentWindow;  // 获取当前iframe页面
-                                var inputList = body.find('input');
-                                for (var i = 0; i < inputList.length; i++) {
-                                    $(inputList[i]).attr("value", oldValues[i + 1]); //遍历子窗口的input标签，将之前数组中的值一次放入显示
-                                    {#$(inputList[i]).val(oldValues[i + 1]); //遍历子窗口的input标签，将之前数组中的值一次放入显示#}
-                                }
+                                })
+                                ;
+                                // parent.layer.close(index);
                             }
                         });
                         break;

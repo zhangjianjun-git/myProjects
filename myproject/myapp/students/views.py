@@ -1,5 +1,5 @@
 import json
-
+import urllib.parse
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
@@ -122,10 +122,29 @@ def student_create(request):
     return render(request, 'students/student_add.html', {'form': form})
 
 
+def student_edit(request, pk):
+    student = Student.objects.get(id=pk)
+    if request.method == 'POST' \
+            and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        form = StudentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"code": 0, "msg": "修改成功！"})
+        else:
+            errors = {}
+            for field, error_list in form.errors.items():
+                errors[field] = [error for error in error_list]  # 将每个错误转换为字符串列表
+            errors = json.dumps(errors, ensure_ascii=False)  # 将错误信息转换为JSON字符串
+            return JsonResponse({"code": 1, "msg": errors}, safe=False)
+    else:
+        form = StudentForm(instance=student)
+        return render(request, 'students/student_edit.html', {'form': form})
+
+
 # 定义一个函数，根据学生id修改学生信息
 def student_update(request, pk):
     student_obj = Student.objects.get(id=pk)
-    if request.method == 'POST'  \
+    if request.method == 'POST' \
             and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         name = request.POST.get("name")
         age = request.POST.get("age")

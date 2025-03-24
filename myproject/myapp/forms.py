@@ -93,7 +93,7 @@ class StudentForm(forms.ModelForm):
     address = forms.CharField(label="地址", required=False, error_messages={'required': "请输入地址"},
                               widget=forms.TextInput(attrs={'placeholder': '请输入地址'}))
     enter_date = forms.DateField(label="入学日期", required=False, error_messages={'required': "请输入入学日期"},
-                                 widget=forms.DateInput(attrs={'type': 'date'}), input_formats=['%Y-%m-%d'])
+                                 widget=forms.DateInput(attrs={'type': 'date'}))
     # 关联班级
     sclass = forms.ModelChoiceField(label="班级", queryset=Class.objects.all(), required=True, help_text="请选择班级11",
                                     error_messages={'required': "请选择班级"}, empty_label="请选择班级")
