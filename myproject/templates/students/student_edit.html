@@ -1,8 +1,8 @@
 {% extends 'basePage.html' %}
-{% block title %}详情页面{% endblock %}
+{% block title %}编辑学生{% endblock %}
 
 {% block content %}
-<form id="detailForm" class="layui-form" action="" enctype="multipart/form-data">
+<form id="addStudentForm" class="layui-form" action="" enctype="multipart/form-data">
     {% csrf_token %}
     {% for field in form %}
         <div class="layui-form-item">

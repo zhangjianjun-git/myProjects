@@ -295,6 +295,11 @@
                 ;
             });
 
+            // 点击行时自动勾选复选框
+            table.on('row(linkList)', function (obj) {
+                obj.tr.find('div.layui-unselect.layui-form-checkbox')[0].click();//添加复选框
+            });
+
             // 监听行工具事件：也就是编辑与删除的处理事件
             table.on('tool(linkList)', function (obj) {
                 // 获取tool行数据，这里用来提供数据
@@ -313,7 +318,7 @@
                         var index = layer.open({
                             type: 2,
                             title: "链接详情页面",
-                            area: ['450px', '800px'],
+                            area: ['600px', '450px'],
                             fix: false,
                             maxmin: true,
                             shadeClose: true,
@@ -341,10 +346,10 @@
                             oldValues.push(value);
                         });
 
-                        var index = layer.open({
+                        var index = parent.layer.open({
                             type: 2,
                             title: "编辑链接页面",
-                            area: ['450px', '800px'],
+                            area: ['600px', '450px'],
                             fix: false,
                             maxmin: true,
                             shadeClose: true,
@@ -440,7 +445,11 @@
                         enter_date_range: enter_date_range
                     },
                     method: 'get',
-                    url: '/myapp/students/get_students_page'
+                    url: '/myapp/students/get_students_page',
+                    headers: {  // 添加这行来设置请求头
+                        "X-CSRFToken": '{{ csrf_token }}'  // 这里是Django模板语法，用于获取CSRF令牌
+                    }
+
                 });
             });
         }

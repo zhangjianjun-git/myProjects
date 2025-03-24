@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 @xframe_options_sameorigin
+# @csrf_exempt
 def get_students_page(request):
     students = Student.objects.all()
     if request.GET.get('name'):
@@ -124,7 +125,8 @@ def student_create(request):
 # 定义一个函数，根据学生id修改学生信息
 def student_update(request, pk):
     student_obj = Student.objects.get(id=pk)
-    if request.method == 'POST' and request.is_ajax():
+    if request.method == 'POST'  \
+            and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         name = request.POST.get("name")
         age = request.POST.get("age")
         gender = request.POST.get("gender")
