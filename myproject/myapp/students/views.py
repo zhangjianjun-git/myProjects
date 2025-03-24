@@ -126,7 +126,7 @@ def student_edit(request, pk):
     student = Student.objects.get(id=pk)
     if request.method == 'POST' \
             and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        form = StudentForm(request.POST, request.FILES)
+        form = StudentForm(request.POST, request.FILES, instance=student)
         if form.is_valid():
             form.save()
             return JsonResponse({"code": 0, "msg": "修改成功！"})
